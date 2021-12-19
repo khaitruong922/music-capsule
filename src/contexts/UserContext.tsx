@@ -9,6 +9,7 @@ export const UserContext = createContext<UserContextProps | undefined>(
 )
 export const UserProvider: FC = ({ children }) => {
 	const [name, setName] = useState(localStorage.getItem('name'))
+
 	const value = { name, setName }
 	return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }

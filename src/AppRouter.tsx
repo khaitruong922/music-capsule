@@ -1,14 +1,35 @@
 import { Flex } from '@chakra-ui/react'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Lobby from 'src/pages/Lobby'
+import { JOIN_LOBBY, LOBBY_JOINED } from './common/constants/lobby.event'
 import NavBar from './components/shared/NavBar'
+import { useLobbyContext } from './contexts/LobbyContext'
+import { useSocket } from './contexts/SocketContext'
 import { useUserContext } from './contexts/UserContext'
 import Landing from './pages/Landing'
-import Room from './pages/Room'
+import RoomPage from './pages/RoomPage'
 
 const AppRouter: FC = () => {
 	const { name } = useUserContext()
+	const { setJoinedLobby } = useLobbyContext()
+	const socket = useSocket()
+
+	useEffect(() => {
+		if (!name) return
+		socket.on('connect', () => {
+			socket.emit(JOIN_LOBBY, { user: { name } })
+		})
+		const lobbyJoined = async () => {
+			setJoinedLobby(true)
+		}
+		socket.on(LOBBY_JOINED, lobbyJoined)
+		return () => {
+			socket.off(LOBBY_JOINED, lobbyJoined)
+			socket.disconnect()
+		}
+	}, [name])
+
 	return (
 		<BrowserRouter>
 			<Flex direction="column" minH="100vh">
@@ -16,7 +37,7 @@ const AppRouter: FC = () => {
 				<Routes>
 					<Route path="/">
 						<Route index element={name ? <Lobby /> : <Landing />}></Route>
-						<Route path="/:roomId" element={<Room />}></Route>
+						<Route path="/:roomId" element={<RoomPage />}></Route>
 					</Route>
 				</Routes>
 			</Flex>
