@@ -7,22 +7,23 @@ import {
 	SimpleGrid,
 	Text,
 } from '@chakra-ui/react'
+import axios from 'axios'
 import { FC, FormEvent, useEffect, useState } from 'react'
 import {
 	CREATE_ROOM,
 	JOIN_CREATED_ROOM,
+	ROOM_CREATED,
+	ROOM_DELETED,
 } from 'src/common/constants/lobby.event'
+import { RoomWithUsers } from 'src/common/core/lobby/lobby.interface'
 import LobbyService from 'src/common/core/lobby/lobby.service'
 import useInput from 'src/common/hooks/useInput'
 import useNavigateRoom from 'src/common/hooks/useNavigateRoom'
 import RoomCard from 'src/components/lobby/RoomCard'
 import { useErrorToast } from 'src/components/shared/toast'
-import { useSocket } from 'src/contexts/SocketContext'
+import { useLobbyContext } from 'src/contexts/LobbyContext'
+import { socket, useSocket } from 'src/contexts/SocketContext'
 import { useUserContext } from 'src/contexts/UserContext'
-
-interface JoinCreatedRoomDto {
-	roomId: string
-}
 
 const CreateRoomForm: FC = () => {
 	const socket = useSocket()
@@ -72,9 +73,11 @@ const JoinRoomForm: FC = () => {
 			const room = await LobbyService.getRoom(roomIdInput)
 			navigateRoom(roomIdInput)
 		} catch (e) {
-			errorToast({
-				title: 'Room not found!',
-			})
+			if (axios.isAxiosError(e)) {
+				errorToast({
+					title: e.response?.data.message,
+				})
+			}
 		} finally {
 			setLoading(false)
 		}
@@ -104,6 +107,37 @@ const JoinRoomForm: FC = () => {
 	)
 }
 
+const RoomList: FC = () => {
+	const { fetchRooms, rooms, addRoom, deleteRoom, clearRooms } =
+		useLobbyContext()
+	useEffect(() => {
+		const roomsCreated = ({ room }: { room: RoomWithUsers }) => {
+			addRoom(room)
+		}
+		const roomsDeleted = ({ roomId }: { roomId: string }) => {
+			deleteRoom(roomId)
+		}
+		const f = async () => {
+			await fetchRooms()
+			socket.on(ROOM_CREATED, roomsCreated)
+			socket.on(ROOM_DELETED, roomsDeleted)
+		}
+		f()
+		return () => {
+			clearRooms()
+			socket.off(ROOM_CREATED, roomsCreated)
+			socket.off(ROOM_DELETED, roomsDeleted)
+		}
+	}, [])
+	return (
+		<SimpleGrid p={8} gap={2} columns={[1, 1, 2, 2, 3]}>
+			{Object.values(rooms).map((room) => {
+				return <RoomCard key={room.id} room={room} />
+			})}
+		</SimpleGrid>
+	)
+}
+
 const Lobby: FC = () => {
 	const { name } = useUserContext()
 	const socket = useSocket()
@@ -111,7 +145,6 @@ const Lobby: FC = () => {
 
 	useEffect(() => {
 		const joinCreatedRoom = ({ roomId }: { roomId: string }) => {
-			console.log(roomId)
 			navigateRoom(roomId)
 		}
 		socket.on(JOIN_CREATED_ROOM, joinCreatedRoom)
@@ -121,8 +154,8 @@ const Lobby: FC = () => {
 	})
 	return (
 		<Flex flex={1} direction="column">
-			<SimpleGrid p={8} gap={8} columns={4}>
-				<GridItem colSpan={[4, 2, null, 2, 1]}>
+			<SimpleGrid flex={1} gap={8} columns={8}>
+				<GridItem p={8} colSpan={[8, 4, 3, 3, 2]}>
 					<Flex justify="center" direction="column">
 						<Text fontSize="2xl" fontWeight={600}>
 							Welcome, {name}
@@ -132,12 +165,14 @@ const Lobby: FC = () => {
 					<CreateRoomForm />
 					<JoinRoomForm />
 				</GridItem>
-				<GridItem colSpan={[4, 2, null, 2, 3]}>
-					<SimpleGrid gap={2} columns={[2, 2, null, 3, 4]}>
-						<RoomCard roomId="1" name={'Vocaloid'} />
-						<RoomCard roomId="2" name={'Vocaloid'} />
-						<RoomCard roomId="3" name={'Vocaloid'} />
-					</SimpleGrid>
+				<GridItem
+					h={'100%'}
+					style={{}}
+					overflowY={'auto'}
+					bgColor={'purple.white'}
+					colSpan={[8, 4, 5, 5, 6]}
+				>
+					<RoomList />
 				</GridItem>
 			</SimpleGrid>
 		</Flex>

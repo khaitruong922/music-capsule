@@ -8,6 +8,7 @@ export const JOIN_LOBBY = 'JOIN_LOBBY'
 // Send
 export const LOBBY_JOINED = 'LOBBY_JOINED'
 export const JOIN_CREATED_ROOM = 'JOIN_CREATED_ROOM'
+export const ROOM_CREATED = 'ROOM_CREATED'
 export const ROOM_DELETED = 'ROOM_DELETED'
 export const POPULATE_ROOMS = 'POPULATE_ROOMS'
 export const USER_JOIN_ROOM = 'USER_JOIN_ROOM'

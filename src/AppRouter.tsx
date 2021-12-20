@@ -34,12 +34,16 @@ const AppRouter: FC = () => {
 		<BrowserRouter>
 			<Flex direction="column" minH="100vh">
 				<NavBar />
-				<Routes>
-					<Route path="/">
-						<Route index element={name ? <Lobby /> : <Landing />}></Route>
-						<Route path="/:roomId" element={<RoomPage />}></Route>
-					</Route>
-				</Routes>
+				{name ? (
+					<Routes>
+						<Route path="/">
+							<Route index element={<Lobby />}></Route>
+							<Route path="/:roomId" element={<RoomPage />}></Route>
+						</Route>
+					</Routes>
+				) : (
+					<Landing />
+				)}
 			</Flex>
 		</BrowserRouter>
 	)

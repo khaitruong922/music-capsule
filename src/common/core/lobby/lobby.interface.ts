@@ -17,6 +17,10 @@ export interface Room {
 	name: string
 }
 
+export interface Rooms {
+	[roomId: string]: RoomWithUsers
+}
+
 export interface RoomWithUsers extends Room {
 	users: {
 		[socketId: string]: UserWithSocketId

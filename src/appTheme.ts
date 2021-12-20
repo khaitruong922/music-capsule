@@ -16,10 +16,13 @@ const appTheme = extendTheme({
 	},
 	colors: {
 		green: {
+			lightest: '#d6ffe6',
+			lighter: '#adffcc',
 			light: '#91ff93',
-			main: '#5cff7a',
+			main: '#57ff97',
 		},
 		purple: {
+			white: '#f3e0ff',
 			lightest: '#f5d9ff',
 			light: '#9F7AEA',
 			main: '#805AD5',
