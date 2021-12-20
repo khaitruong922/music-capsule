@@ -7,12 +7,16 @@ interface RoomContextProps {
 	addSong: (song: Song) => any
 	nextSong: () => any
 	fetchQueue: (roomId: string) => any
+	loading: boolean
 }
+
 export const RoomContext = createContext<RoomContextProps | undefined>(
 	undefined,
 )
 export const RoomProvider: FC = ({ children }) => {
 	const [queue, setQueue] = useState<Song[]>([])
+	const [loading, setLoading] = useState(true)
+
 	const fetchQueue = async (roomId: string) => {
 		const queue = await StreamService.fetchQueue(roomId)
 		console.log(
@@ -20,18 +24,37 @@ export const RoomProvider: FC = ({ children }) => {
 			queue,
 		)
 		setQueue(queue)
+		setLoading(false)
 	}
+
 	const addSong = (song: Song) => {
 		setQueue((queue) => [...queue, song])
 	}
+
 	const nextSong = () => {
 		setQueue((queue) => {
+			console.log(
+				'🚀 ~ file: RoomContext.tsx ~ line 32 ~ setQueue ~ queue',
+				queue,
+			)
 			const newQueue = [...queue]
 			newQueue.shift()
+			console.log(
+				'🚀 ~ file: RoomContext.tsx ~ line 35 ~ setQueue ~ newQueue',
+				newQueue,
+			)
 			return newQueue
 		})
 	}
-	const value = { queue, addSong, nextSong, fetchQueue }
+
+	const value = {
+		queue,
+		addSong,
+		nextSong,
+		fetchQueue,
+		loading,
+	}
+
 	return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>
 }
 

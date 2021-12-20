@@ -1,11 +1,13 @@
 import { Button, chakra, Flex, Input, Text } from '@chakra-ui/react'
 import { FC, FormEvent, useCallback, useEffect, useRef, useState } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { JOIN_ROOM, LEAVE_ROOM } from 'src/common/constants/lobby.event'
 import {
 	ADD_SONG,
 	ADD_SONG_FAILED,
 	ADD_SONG_SUCCESS,
+	NEXT_SONG,
+	SKIP,
 	SONG_ADDED,
 } from 'src/common/constants/stream.event'
 import { RoomWithUsers } from 'src/common/core/lobby/lobby.interface'
@@ -89,48 +91,84 @@ const AddSongForm: FC = () => {
 const SongPlayer: FC = () => {
 	const socket = useSocket()
 	const { roomId } = useParams()
-	const { queue, addSong, nextSong, fetchQueue } = useRoomContext()
+	const { queue, addSong, nextSong, fetchQueue, loading } = useRoomContext()
 	const audioRef = useRef<HTMLAudioElement>(null)
+	const playingRef = useRef<boolean>(false)
+
+	const playCurrentSong = () => {
+		const audio = audioRef.current
+		if (!audio) return
+		const song = queue[0]
+		console.log(
+			'🚀 ~ file: RoomPage.tsx ~ line 101 ~ playCurrentSong ~ song',
+			song,
+		)
+		if (!song) {
+			console.log('no song')
+			audio.src = ''
+			playingRef.current = false
+			return
+		}
+		const { fileName, startTime } = song
+		const url = StaticService.getMp3Url(song.fileName)
+		audio.src = url
+		audio.muted = false
+		audio.currentTime = startTime ? Date.now() / 1000 - startTime : 0
+		audio.load()
+		audio.play()
+		playingRef.current = true
+	}
+
+	const requestSkip = () => {
+		socket.emit(SKIP)
+	}
 
 	useEffect(() => {
 		const audio = audioRef.current
 		if (!audio) return
 		fetchQueue(roomId!)
-		audio.addEventListener('ended', () => {
-			nextSong()
-		})
 		const songAdded = ({ song }: { song: Song }) => {
 			addSong(song)
 			const url = StaticService.getMp3Url(song.fileName)
 			console.log('🚀 ~ file: RoomPage.tsx ~ line 88 ~ songAdded ~ url', url)
 		}
+
+		const onNextSong = () => {
+			// Shift to next song
+			console.log('nextSong')
+			playingRef.current = false
+			nextSong()
+		}
+
 		socket.on(SONG_ADDED, songAdded)
+		socket.on(NEXT_SONG, onNextSong)
 		return () => {
 			socket.off(SONG_ADDED, songAdded)
+			socket.off(NEXT_SONG, onNextSong)
 		}
 	}, [])
 
 	useEffect(() => {
 		const audio = audioRef.current
 		if (!audio) return
-		if (queue.length === 0) {
-			return
-		}
-		// Should play the song immediately when there is 1 song
-		if (queue.length === 1) {
-			const song = queue[0]
-			const url = StaticService.getMp3Url(song.fileName)
-			audio.src = url
-			audio.muted = false
-			audio.currentTime = song.startTime
-				? Date.now() / 1000 - song.startTime
-				: 0
-			audio.load()
-			audio.play()
-		}
-	}, [queue])
+		if (loading) return
+		// Auto play queue when there is one song
+	}, [loading])
 
-	return <audio ref={audioRef} muted autoPlay controls />
+	useEffect(() => {
+		if (!playingRef.current) {
+			playCurrentSong()
+		}
+	}, [queue.length])
+
+	return (
+		<Flex align="center">
+			<audio ref={audioRef} muted autoPlay controls />
+			<Button onClick={requestSkip} colorScheme="purple">
+				Skip
+			</Button>
+		</Flex>
+	)
 }
 
 const RoomPage: FC = () => {
@@ -148,7 +186,7 @@ const RoomPage: FC = () => {
 			const room = await LobbyService.getRoom(roomId!)
 			setRoom(room)
 		} catch (e) {
-			navigate('/', { replace: true })
+			// navigate('/', { replace: true })
 		} finally {
 			setLoading(false)
 		}
@@ -167,7 +205,6 @@ const RoomPage: FC = () => {
 		}
 	}, [loading, joinedLobby])
 
-	if (!loading && !room) return <Navigate to="/" replace={true} />
 	return (
 		<RoomProvider>
 			<Flex p={8} justify="center" direction="column">
