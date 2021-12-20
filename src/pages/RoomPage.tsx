@@ -186,7 +186,7 @@ const RoomPage: FC = () => {
 			const room = await LobbyService.getRoom(roomId!)
 			setRoom(room)
 		} catch (e) {
-			// navigate('/', { replace: true })
+			navigate('/', { replace: true })
 		} finally {
 			setLoading(false)
 		}
