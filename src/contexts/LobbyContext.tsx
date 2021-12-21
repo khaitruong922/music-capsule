@@ -1,12 +1,16 @@
 import { createContext, FC, useContext, useState } from 'react'
-import { Rooms, RoomWithUsers } from 'src/common/core/lobby/lobby.interface'
+import {
+	LobbyRoomResponse,
+	LobbyRoomsResponse,
+	RoomResponse,
+} from 'src/common/core/lobby/lobby.interface'
 import LobbyService from 'src/common/core/lobby/lobby.service'
 
 interface LobbyContextProps {
 	joinedLobby: boolean
 	setJoinedLobby: (b: boolean) => any
-	rooms: Rooms
-	addRoom: (room: RoomWithUsers) => any
+	rooms: LobbyRoomsResponse
+	addRoom: (room: LobbyRoomResponse) => any
 	deleteRoom: (roomId: string) => any
 	clearRooms: () => any
 	fetchRooms: () => any
@@ -17,9 +21,9 @@ export const LobbyContext = createContext<LobbyContextProps | undefined>(
 )
 export const LobbyProvider: FC = ({ children }) => {
 	const [joinedLobby, setJoinedLobby] = useState<boolean>(false)
-	const [rooms, setRooms] = useState<Rooms>({})
+	const [rooms, setRooms] = useState<LobbyRoomsResponse>({})
 
-	const addRoom = (room: RoomWithUsers) => {
+	const addRoom = (room: LobbyRoomResponse) => {
 		setRooms((rooms) => ({ ...rooms, [room.id]: room }))
 	}
 
@@ -36,8 +40,8 @@ export const LobbyProvider: FC = ({ children }) => {
 	}
 
 	const fetchRooms = async () => {
-		const fetchedRooms = await LobbyService.getRooms()
-		setRooms(fetchedRooms)
+		const lobby = await LobbyService.getLobby()
+		setRooms(lobby.rooms)
 	}
 
 	const value = {

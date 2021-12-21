@@ -1,7 +1,12 @@
 import { Button, chakra, Flex, Input, Text } from '@chakra-ui/react'
-import { FC, FormEvent, useCallback, useEffect, useRef, useState } from 'react'
+import { FC, FormEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { JOIN_ROOM, LEAVE_ROOM } from 'src/common/constants/lobby.event'
+import {
+	JOIN_ROOM,
+	LEAVE_ROOM,
+	USER_JOIN_ROOM,
+	USER_LEAVE_ROOM,
+} from 'src/common/constants/lobby.event'
 import {
 	ADD_SONG,
 	ADD_SONG_FAILED,
@@ -10,15 +15,14 @@ import {
 	SKIP,
 	SONG_ADDED,
 } from 'src/common/constants/stream.event'
-import { RoomWithUsers } from 'src/common/core/lobby/lobby.interface'
-import LobbyService from 'src/common/core/lobby/lobby.service'
+import { User, UserWithSocketId } from 'src/common/core/lobby/lobby.interface'
 import StaticService from 'src/common/core/static/static.service'
 import { Song } from 'src/common/core/stream/stream.interface'
 import useInput from 'src/common/hooks/useInput'
 import { useErrorToast, useSuccessToast } from 'src/components/shared/toast'
 import { useLobbyContext } from 'src/contexts/LobbyContext'
-import { RoomProvider, useRoomContext } from 'src/contexts/RoomContext'
-import { useSocket } from 'src/contexts/SocketContext'
+import { useRoomContext } from 'src/contexts/RoomContext'
+import { socket, useSocket } from 'src/contexts/SocketContext'
 
 const AddSongForm: FC = () => {
 	const socket = useSocket()
@@ -90,10 +94,8 @@ const AddSongForm: FC = () => {
 
 const SongPlayer: FC = () => {
 	const socket = useSocket()
-	const { roomId } = useParams()
-	const { queue, addSong, nextSong, fetchQueue, loading } = useRoomContext()
+	const { queue, addSong, nextSong, playingRef } = useRoomContext()
 	const audioRef = useRef<HTMLAudioElement>(null)
-	const playingRef = useRef<boolean>(false)
 
 	const playCurrentSong = () => {
 		const audio = audioRef.current
@@ -110,7 +112,7 @@ const SongPlayer: FC = () => {
 			return
 		}
 		const { fileName, startTime } = song
-		const url = StaticService.getMp3Url(song.fileName)
+		const url = StaticService.getMp3Url(fileName)
 		audio.src = url
 		audio.muted = false
 		audio.currentTime = startTime ? Date.now() / 1000 - startTime : 0
@@ -126,7 +128,6 @@ const SongPlayer: FC = () => {
 	useEffect(() => {
 		const audio = audioRef.current
 		if (!audio) return
-		fetchQueue(roomId!)
 		const songAdded = ({ song }: { song: Song }) => {
 			addSong(song)
 			const url = StaticService.getMp3Url(song.fileName)
@@ -149,24 +150,63 @@ const SongPlayer: FC = () => {
 	}, [])
 
 	useEffect(() => {
-		const audio = audioRef.current
-		if (!audio) return
-		if (loading) return
-		// Auto play queue when there is one song
-	}, [loading])
-
-	useEffect(() => {
 		if (!playingRef.current) {
 			playCurrentSong()
 		}
 	}, [queue.length])
 
 	return (
-		<Flex align="center">
-			<audio ref={audioRef} muted autoPlay controls />
-			<Button onClick={requestSkip} colorScheme="purple">
-				Skip
-			</Button>
+		<Flex direction="column">
+			<Flex align="center">
+				<audio ref={audioRef} muted autoPlay controls />
+				<Button onClick={requestSkip} colorScheme="purple">
+					Skip
+				</Button>
+			</Flex>
+			<SongList />
+		</Flex>
+	)
+}
+
+const UserList: FC = () => {
+	const { users, addUser, deleteUser } = useRoomContext()
+	useEffect(() => {
+		const userJoinRoom = ({ user }: { user: UserWithSocketId }) => {
+			console.log('userJoinRoom', user)
+			addUser(user)
+		}
+		const userLeaveRoom = ({ socketId }: { socketId: string }) => {
+			deleteUser(socketId)
+		}
+		socket.on(USER_JOIN_ROOM, userJoinRoom)
+		socket.on(USER_LEAVE_ROOM, userLeaveRoom)
+		return () => {
+			socket.off(USER_JOIN_ROOM, userJoinRoom)
+			socket.off(USER_LEAVE_ROOM, userLeaveRoom)
+		}
+	}, [])
+
+	return (
+		<Flex direction="column">
+			<Text>Users</Text>
+			{Object.keys(users).map((id) => {
+				const user = users[id]
+				const { name } = user
+				return <Flex key={id}>{name}</Flex>
+			})}
+		</Flex>
+	)
+}
+
+const SongList: FC = () => {
+	const { queue } = useRoomContext()
+	return (
+		<Flex direction="column">
+			<Text>Songs</Text>
+			{queue.map((song) => {
+				const { fileName, title, author, startTime, length } = song
+				return <Flex key={fileName}>{title}</Flex>
+			})}
 		</Flex>
 	)
 }
@@ -175,48 +215,45 @@ const RoomPage: FC = () => {
 	const socket = useSocket()
 	const { roomId } = useParams()
 	const { joinedLobby } = useLobbyContext()
+	const { fetchRoom, loading, room, leaveRoom } = useRoomContext()
 	const { id: socketId } = socket
 	const navigate = useNavigate()
-	const [loading, setLoading] = useState(true)
-	const [room, setRoom] = useState<RoomWithUsers>()
-
-	const fetchRoom = useCallback(async () => {
-		setLoading(true)
-		try {
-			const room = await LobbyService.getRoom(roomId!)
-			setRoom(room)
-		} catch (e) {
-			navigate('/', { replace: true })
-		} finally {
-			setLoading(false)
-		}
-	}, [roomId])
 
 	useEffect(() => {
-		fetchRoom()
+		return () => {
+			leaveRoom()
+		}
 	}, [])
+
+	useEffect(() => {
+		fetchRoom(roomId!)
+	}, [roomId])
 
 	useEffect(() => {
 		if (loading) return
 		if (!joinedLobby) return
+		if (!room) {
+			navigate('/', { replace: true })
+			return
+		}
 		socket.emit(JOIN_ROOM, { socketId, roomId })
 		return () => {
 			socket.emit(LEAVE_ROOM, { socketId, roomId })
 		}
 	}, [loading, joinedLobby])
 
+	if (!room) return <></>
 	return (
-		<RoomProvider>
-			<Flex p={8} justify="center" direction="column">
-				<Text fontSize="2xl" fontWeight={600}>
-					Room {room?.name}
-				</Text>
-				<Flex align="center" justify="center">
-					<AddSongForm />
-				</Flex>
-				<SongPlayer />
+		<Flex p={8} justify="center" direction="column">
+			<Text fontSize="2xl" fontWeight={600}>
+				Room {room?.name}
+			</Text>
+			<Flex align="center" justify="center">
+				<AddSongForm />
 			</Flex>
-		</RoomProvider>
+			<SongPlayer />
+			<UserList />
+		</Flex>
 	)
 }
 

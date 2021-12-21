@@ -1,32 +1,62 @@
-import { createContext, FC, useContext, useState } from 'react'
+import {
+	createContext,
+	FC,
+	MutableRefObject,
+	useContext,
+	useRef,
+	useState,
+} from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+	Room,
+	User,
+	Users,
+	UserWithSocketId,
+} from 'src/common/core/lobby/lobby.interface'
+import LobbyService from 'src/common/core/lobby/lobby.service'
 import { Song } from 'src/common/core/stream/stream.interface'
-import StreamService from 'src/common/core/stream/stream.service'
 
 interface RoomContextProps {
+	room?: Room
 	queue: Song[]
+	users: Users
 	addSong: (song: Song) => any
 	nextSong: () => any
-	fetchQueue: (roomId: string) => any
+	fetchRoom: (roomId: string) => any
+	leaveRoom: () => any
+	addUser: (user: UserWithSocketId) => any
+	deleteUser: (socketId: string) => any
 	loading: boolean
+	playingRef: MutableRefObject<boolean>
 }
 
 export const RoomContext = createContext<RoomContextProps | undefined>(
 	undefined,
 )
 export const RoomProvider: FC = ({ children }) => {
+	const [room, setRoom] = useState<Room>()
 	const [queue, setQueue] = useState<Song[]>([])
+	const [users, setUsers] = useState<Users>({})
 	const [loading, setLoading] = useState(true)
+	const playingRef = useRef<boolean>(false)
 
-	const fetchQueue = async (roomId: string) => {
-		const queue = await StreamService.fetchQueue(roomId)
-		console.log(
-			'🚀 ~ file: RoomContext.tsx ~ line 18 ~ fetchQueue ~ queue',
-			queue,
-		)
-		setQueue(queue)
-		setLoading(false)
+	const leaveRoom = () => {
+		setRoom(undefined)
+		setQueue([])
+		setUsers({})
+		setLoading(true)
 	}
-
+	const fetchRoom = async (roomId: string) => {
+		try {
+			const { id, name, queue, users } = await LobbyService.getRoom(roomId)
+			setRoom({ id, name })
+			setQueue(queue)
+			setUsers(users)
+		} catch (e) {
+		} finally {
+			setLoading(false)
+		}
+	}
 	const addSong = (song: Song) => {
 		setQueue((queue) => [...queue, song])
 	}
@@ -47,12 +77,30 @@ export const RoomProvider: FC = ({ children }) => {
 		})
 	}
 
+	const addUser = (user: UserWithSocketId) => {
+		setUsers((users) => ({ ...users, [user.socketId]: user }))
+	}
+
+	const deleteUser = (socketId: string) => {
+		setUsers((users) => {
+			const newRooms = { ...users }
+			delete newRooms[socketId]
+			return newRooms
+		})
+	}
+
 	const value = {
+		room,
 		queue,
 		addSong,
 		nextSong,
-		fetchQueue,
+		fetchRoom,
 		loading,
+		users,
+		leaveRoom,
+		playingRef,
+		addUser,
+		deleteUser,
 	}
 
 	return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>

@@ -1,20 +1,21 @@
 import api from 'src/common/api'
-import { Rooms, RoomWithUsers } from './lobby.interface'
+import { LobbyResponse, RoomResponse } from './lobby.interface'
 
+const LOBBY_ROUTE = '/lobby'
 const ROOMS_ROUTE = '/lobby/rooms'
 
-const getRooms = async (): Promise<Rooms> => {
-	const res = await api.get(ROOMS_ROUTE)
+const getLobby = async (): Promise<LobbyResponse> => {
+	const res = await api.get(LOBBY_ROUTE)
 	return res.data
 }
 
-const getRoom = async (id: string): Promise<RoomWithUsers> => {
+const getRoom = async (id: string): Promise<RoomResponse> => {
 	const res = await api.get(`${ROOMS_ROUTE}/${id}`)
 	return res.data
 }
 
 const LobbyService = {
-	getRooms,
+	getLobby,
 	getRoom,
 }
 

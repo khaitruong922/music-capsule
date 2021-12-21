@@ -15,7 +15,10 @@ import {
 	ROOM_CREATED,
 	ROOM_DELETED,
 } from 'src/common/constants/lobby.event'
-import { RoomWithUsers } from 'src/common/core/lobby/lobby.interface'
+import {
+	LobbyRoomResponse,
+	RoomResponse,
+} from 'src/common/core/lobby/lobby.interface'
 import LobbyService from 'src/common/core/lobby/lobby.service'
 import useInput from 'src/common/hooks/useInput'
 import useNavigateRoom from 'src/common/hooks/useNavigateRoom'
@@ -111,7 +114,7 @@ const RoomList: FC = () => {
 	const { fetchRooms, rooms, addRoom, deleteRoom, clearRooms } =
 		useLobbyContext()
 	useEffect(() => {
-		const roomsCreated = ({ room }: { room: RoomWithUsers }) => {
+		const roomsCreated = ({ room }: { room: LobbyRoomResponse }) => {
 			addRoom(room)
 		}
 		const roomsDeleted = ({ roomId }: { roomId: string }) => {
