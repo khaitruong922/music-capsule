@@ -14,12 +14,12 @@ import {
 	JOIN_CREATED_ROOM,
 	ROOM_CREATED,
 	ROOM_DELETED,
+	ROOM_USER_COUNT_CHANGED,
 } from 'src/common/constants/lobby.event'
-import {
-	LobbyRoomResponse,
-	RoomResponse,
-} from 'src/common/core/lobby/lobby.interface'
+import { ROOM_SONG_CHANGED } from 'src/common/constants/stream.event'
+import { LobbyRoomResponse } from 'src/common/core/lobby/lobby.interface'
 import LobbyService from 'src/common/core/lobby/lobby.service'
+import { Song } from 'src/common/core/stream/stream.interface'
 import useInput from 'src/common/hooks/useInput'
 import useNavigateRoom from 'src/common/hooks/useNavigateRoom'
 import RoomCard from 'src/components/lobby/RoomCard'
@@ -110,8 +110,18 @@ const JoinRoomForm: FC = () => {
 	)
 }
 
+interface RoomSongChangedPayload {
+	roomId: string
+	song: Song
+}
+
+interface RoomUserCountChangedPayload {
+	roomId: string
+	userCount: number
+}
+
 const RoomList: FC = () => {
-	const { fetchRooms, rooms, addRoom, deleteRoom, clearRooms } =
+	const { fetchRooms, rooms, addRoom, deleteRoom, clearRooms, updateRoom } =
 		useLobbyContext()
 	useEffect(() => {
 		const roomsCreated = ({ room }: { room: LobbyRoomResponse }) => {
@@ -120,16 +130,31 @@ const RoomList: FC = () => {
 		const roomsDeleted = ({ roomId }: { roomId: string }) => {
 			deleteRoom(roomId)
 		}
+		const roomSongChanged = ({ roomId, song }: RoomSongChangedPayload) => {
+			console.log('roomSongChanged')
+			updateRoom(roomId, { nowPlaying: song })
+		}
+		const roomUserCountChanged = ({
+			roomId,
+			userCount,
+		}: RoomUserCountChangedPayload) => {
+			updateRoom(roomId, { userCount })
+		}
+
 		const f = async () => {
 			await fetchRooms()
 			socket.on(ROOM_CREATED, roomsCreated)
 			socket.on(ROOM_DELETED, roomsDeleted)
+			socket.on(ROOM_SONG_CHANGED, roomSongChanged)
+			socket.on(ROOM_USER_COUNT_CHANGED, roomUserCountChanged)
 		}
 		f()
 		return () => {
 			clearRooms()
 			socket.off(ROOM_CREATED, roomsCreated)
 			socket.off(ROOM_DELETED, roomsDeleted)
+			socket.off(ROOM_SONG_CHANGED, roomSongChanged)
+			socket.off(ROOM_USER_COUNT_CHANGED, roomUserCountChanged)
 		}
 	}, [])
 	return (

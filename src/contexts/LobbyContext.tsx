@@ -2,7 +2,7 @@ import { createContext, FC, useContext, useState } from 'react'
 import {
 	LobbyRoomResponse,
 	LobbyRoomsResponse,
-	RoomResponse,
+	Room,
 } from 'src/common/core/lobby/lobby.interface'
 import LobbyService from 'src/common/core/lobby/lobby.service'
 
@@ -14,6 +14,7 @@ interface LobbyContextProps {
 	deleteRoom: (roomId: string) => any
 	clearRooms: () => any
 	fetchRooms: () => any
+	updateRoom: (roomId: string, room: Partial<LobbyRoomResponse>) => any
 }
 
 export const LobbyContext = createContext<LobbyContextProps | undefined>(
@@ -35,6 +36,14 @@ export const LobbyProvider: FC = ({ children }) => {
 		})
 	}
 
+	const updateRoom = (roomId: string, room: Partial<LobbyRoomResponse>) => {
+		setRooms((rooms) => {
+			// Override room field
+			const newRoom = { ...rooms[roomId], ...room }
+			return { ...rooms, [roomId]: newRoom }
+		})
+	}
+
 	const clearRooms = () => {
 		setRooms({})
 	}
@@ -52,6 +61,7 @@ export const LobbyProvider: FC = ({ children }) => {
 		deleteRoom,
 		fetchRooms,
 		clearRooms,
+		updateRoom,
 	}
 	return <LobbyContext.Provider value={value}>{children}</LobbyContext.Provider>
 }

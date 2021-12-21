@@ -226,6 +226,7 @@ const RoomPage: FC = () => {
 	}, [])
 
 	useEffect(() => {
+		console.log('fetchroom')
 		fetchRoom(roomId!)
 	}, [roomId])
 
