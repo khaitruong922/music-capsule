@@ -1,6 +1,6 @@
 # Music Capsule
 
-An online music streaming platform where you can join room and listen to music with other people in real time.
+An online music streaming platform where you can listen to music with other people in real time.
 
 ## Features
 
