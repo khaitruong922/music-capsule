@@ -8,7 +8,7 @@ An online music streaming platform where you can join room and listen to music w
 - **Music streaming**: Stream music only with a YouTube URL. Your song will be put into a queue that will be played in order (and skippable).
 - **Chat**: Interact with other people while enjoying the music.
 
-## Tech stack:
+## Tech stack
 
 - Front-end: React, Chakra UI, Context API
 
