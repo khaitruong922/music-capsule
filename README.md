@@ -12,7 +12,7 @@ An online music streaming platform where you can join room and listen to music w
 
 - Front-end: React, Chakra UI, Context API
 
-- Back-end: NestJS, SocketIO (who even needs a database?)
+- Back-end: NestJS, SocketIO (who even needs a database?) - https://github.com/khaitruong922/music-capsule-server
 
 ## How to use
 
