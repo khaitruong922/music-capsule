@@ -22,6 +22,7 @@ import LobbyService from 'src/common/core/lobby/lobby.service'
 import { Song } from 'src/common/core/stream/stream.interface'
 import useInput from 'src/common/hooks/useInput'
 import useNavigateRoom from 'src/common/hooks/useNavigateRoom'
+import { filterRoomName, ROOM_NAME_MAX_LENGTH } from 'src/common/utils/string'
 import RoomCard from 'src/components/lobby/RoomCard'
 import { useErrorToast } from 'src/components/shared/toast'
 import { useLobbyContext } from 'src/contexts/LobbyContext'
@@ -36,7 +37,7 @@ const CreateRoomForm: FC = () => {
 	const createRoom = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		setLoading(true)
-		socket.emit(CREATE_ROOM, { roomName: roomNameInput })
+		socket.emit(CREATE_ROOM, { roomName: filterRoomName(roomNameInput) })
 	}
 	return (
 		<chakra.form onSubmit={createRoom} display="flex" mt={4}>
@@ -49,6 +50,7 @@ const CreateRoomForm: FC = () => {
 				w="250px"
 				mr={2}
 				isRequired
+				maxLength={ROOM_NAME_MAX_LENGTH}
 			/>
 			<Button
 				w="150px"
@@ -56,6 +58,7 @@ const CreateRoomForm: FC = () => {
 				colorScheme={'purple'}
 				type="submit"
 				isLoading={loading}
+				fontSize={['sm', 'sm', 'sm', 'md']}
 			>
 				Create room
 			</Button>
@@ -103,6 +106,7 @@ const JoinRoomForm: FC = () => {
 				colorScheme={'whatsapp'}
 				type="submit"
 				isLoading={loading}
+				fontSize={['sm', 'sm', 'sm', 'md']}
 			>
 				Join room
 			</Button>
@@ -179,16 +183,19 @@ const Lobby: FC = () => {
 		return () => {
 			socket.off(JOIN_CREATED_ROOM, joinCreatedRoom)
 		}
-	})
+	}, [])
+
 	return (
 		<Flex flex={1} direction="column">
 			<SimpleGrid flex={1} gap={8} columns={8}>
 				<GridItem p={8} colSpan={[8, 4, 3, 3, 2]}>
 					<Flex justify="center" direction="column">
-						<Text fontSize="2xl" fontWeight={600}>
+						<Text fontSize="2xl" noOfLines={2} fontWeight={600}>
 							Welcome, {name}
 						</Text>
-						<Text fontSize="lg">Let's enjoy the music together!</Text>
+						<Text noOfLines={1} fontSize="lg">
+							Let's enjoy the music together!
+						</Text>
 					</Flex>
 					<CreateRoomForm />
 					<JoinRoomForm />

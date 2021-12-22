@@ -26,6 +26,19 @@ const appTheme = extendTheme({
 			lightest: '#f5d9ff',
 			light: '#9F7AEA',
 			main: '#805AD5',
+			dark: '#2c1c45',
+		},
+		orange: {
+			lightest: '#ffeadb',
+			light: '#ffbe8f',
+			main: '#ff9142',
+		},
+		blue: {
+			lightest: '#d6dcff',
+		},
+		pink: {
+			lightest: '#ffd9f6',
+			light: '#ffccf3',
 		},
 	},
 	breakpoints,

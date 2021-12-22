@@ -1,3 +1,4 @@
+import { useBoolean } from '@chakra-ui/react'
 import {
 	createContext,
 	FC,
@@ -6,15 +7,14 @@ import {
 	useRef,
 	useState,
 } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
 	Room,
-	User,
 	Users,
 	UserWithSocketId,
 } from 'src/common/core/lobby/lobby.interface'
 import LobbyService from 'src/common/core/lobby/lobby.service'
 import { Song } from 'src/common/core/stream/stream.interface'
+import useLocalStorage from 'src/common/hooks/useLocalStorage'
 
 interface RoomContextProps {
 	room?: Room
@@ -28,6 +28,13 @@ interface RoomContextProps {
 	deleteUser: (socketId: string) => any
 	loading: boolean
 	playingRef: MutableRefObject<boolean>
+	volume: number
+	setVolume: (volume: number) => any
+	currentTime: number
+	setCurrentTime: (time: number) => any
+	muted: boolean
+	setMuted: (muted: boolean) => any
+	toggleMuted: () => any
 }
 
 export const RoomContext = createContext<RoomContextProps | undefined>(
@@ -38,7 +45,10 @@ export const RoomProvider: FC = ({ children }) => {
 	const [queue, setQueue] = useState<Song[]>([])
 	const [users, setUsers] = useState<Users>({})
 	const [loading, setLoading] = useState(true)
+	const [volume, setVolume] = useLocalStorage('volume', 0.5)
+	const [muted, setMuted] = useBoolean(false)
 	const playingRef = useRef<boolean>(false)
+	const [currentTime, setCurrentTime] = useState(0)
 
 	const leaveRoom = () => {
 		setRoom(undefined)
@@ -46,6 +56,8 @@ export const RoomProvider: FC = ({ children }) => {
 		setUsers({})
 		setLoading(true)
 		playingRef.current = false
+		setCurrentTime(0)
+		// setMuted.off()
 	}
 	const fetchRoom = async (roomId: string) => {
 		try {
@@ -90,6 +102,11 @@ export const RoomProvider: FC = ({ children }) => {
 		})
 	}
 
+	const _setMuted = (muted: boolean) => {
+		if (muted) setMuted.on()
+		else setMuted.off()
+	}
+
 	const value = {
 		room,
 		queue,
@@ -102,6 +119,13 @@ export const RoomProvider: FC = ({ children }) => {
 		playingRef,
 		addUser,
 		deleteUser,
+		volume,
+		setVolume,
+		currentTime,
+		setCurrentTime,
+		muted,
+		setMuted: _setMuted,
+		toggleMuted: setMuted.toggle,
 	}
 
 	return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>

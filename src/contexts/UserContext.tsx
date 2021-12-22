@@ -1,14 +1,15 @@
 import { createContext, FC, useContext, useState } from 'react'
+import useLocalStorage from 'src/common/hooks/useLocalStorage'
 
 interface UserContextProps {
-	name: string | null
+	name: string | undefined
 	setName: (name: string) => any
 }
 export const UserContext = createContext<UserContextProps | undefined>(
 	undefined,
 )
 export const UserProvider: FC = ({ children }) => {
-	const [name, setName] = useState(localStorage.getItem('name'))
+	const [name, setName] = useLocalStorage<string | undefined>('name', undefined)
 
 	const value = { name, setName }
 	return <UserContext.Provider value={value}>{children}</UserContext.Provider>

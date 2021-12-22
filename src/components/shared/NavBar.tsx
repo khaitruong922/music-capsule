@@ -7,10 +7,15 @@ const NavBar: FC = () => {
 	return (
 		<Flex py={4} px={8} align="center" bgColor="#111111" h="64px">
 			<Link to="/">
-				<Image h="40px" src={images.logo} />
+				<Image userSelect={'none'} h="40px" src={images.logo} />
 			</Link>
 			<Link to="/">
-				<Text color="green.main" fontSize="lg" fontWeight={600}>
+				<Text
+					userSelect={'none'}
+					color="green.main"
+					fontSize="lg"
+					fontWeight={600}
+				>
 					Music Capsule
 				</Text>
 			</Link>

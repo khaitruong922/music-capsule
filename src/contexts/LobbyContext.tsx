@@ -22,6 +22,7 @@ export const LobbyContext = createContext<LobbyContextProps | undefined>(
 )
 export const LobbyProvider: FC = ({ children }) => {
 	const [joinedLobby, setJoinedLobby] = useState<boolean>(false)
+
 	const [rooms, setRooms] = useState<LobbyRoomsResponse>({})
 
 	const addRoom = (room: LobbyRoomResponse) => {

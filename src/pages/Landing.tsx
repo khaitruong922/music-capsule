@@ -1,7 +1,8 @@
 import { Button, chakra, Flex, Input, Text } from '@chakra-ui/react'
 import { FC, FormEvent, useEffect } from 'react'
 import useInput from 'src/common/hooks/useInput'
-import { generateRandomName } from 'src/common/util/random'
+import { generateRandomName } from 'src/common/utils/random'
+import { NAME_MAX_LENGTH } from 'src/common/utils/string'
 import { useUserContext } from 'src/contexts/UserContext'
 
 const Landing: FC = () => {
@@ -14,7 +15,6 @@ const Landing: FC = () => {
 	const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		setName(nameInput)
-		localStorage.setItem('name', nameInput)
 	}
 
 	return (
@@ -39,6 +39,7 @@ const Landing: FC = () => {
 					value={nameInput}
 					onInput={onNameInput}
 					isRequired
+					maxLength={NAME_MAX_LENGTH}
 				/>
 				<Button
 					borderRadius="2xl"

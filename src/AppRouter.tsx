@@ -8,7 +8,7 @@ import { useLobbyContext } from './contexts/LobbyContext'
 import { useSocket } from './contexts/SocketContext'
 import { useUserContext } from './contexts/UserContext'
 import Landing from './pages/Landing'
-import RoomPage from './pages/RoomPage'
+import RoomPage from './pages/room/RoomPage'
 
 const AppRouter: FC = () => {
 	const { name } = useUserContext()
