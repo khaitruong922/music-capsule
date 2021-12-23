@@ -127,7 +127,7 @@ const SongPlayer: FC = () => {
 	}, [queue.length])
 
 	const currentSong = queue[0]
-	const { title = 'Title', author = 'Author', length } = currentSong || {}
+	const { title = 'Title', author = 'Channel', length } = currentSong || {}
 
 	return (
 		<Flex

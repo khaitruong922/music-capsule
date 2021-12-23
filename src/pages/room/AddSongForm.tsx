@@ -66,7 +66,7 @@ const AddSongForm: FC = () => {
 			<Input
 				value={url}
 				onInput={onUrlInput}
-				placeholder="YouTube URL"
+				placeholder="Search YouTube / Insert YouTube URL"
 				borderColor="purple.light"
 				focusBorderColor="purple.main"
 				mr={2}
