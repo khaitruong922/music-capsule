@@ -40,6 +40,10 @@ const appTheme = extendTheme({
 			lightest: '#ffd9f6',
 			light: '#ffccf3',
 		},
+		red: {
+			main: '#ff6b7c',
+			light: '#ffa1ab',
+		},
 	},
 	breakpoints,
 })

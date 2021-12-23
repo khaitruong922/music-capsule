@@ -67,14 +67,14 @@ const AddSongForm: FC = () => {
 				value={url}
 				onInput={onUrlInput}
 				placeholder="Search YouTube / Insert YouTube URL"
-				borderColor="purple.light"
-				focusBorderColor="purple.main"
+				borderColor="red.light"
+				focusBorderColor="red.main"
 				mr={2}
 				isRequired
 			/>
 			<Button
 				_focus={{ boxShadow: 'none' }}
-				colorScheme={'purple'}
+				colorScheme={'red'}
 				type="submit"
 				px={6}
 				isLoading={submitting}

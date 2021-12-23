@@ -55,9 +55,8 @@ export const RoomProvider: FC = ({ children }) => {
 		setQueue([])
 		setUsers({})
 		setLoading(true)
-		playingRef.current = false
 		setCurrentTime(0)
-		// setMuted.off()
+		playingRef.current = false
 	}
 	const fetchRoom = async (roomId: string) => {
 		try {

@@ -1,5 +1,5 @@
 import { Box, Button, chakra, Flex, Input, Text } from '@chakra-ui/react'
-import { FC, FormEvent, useEffect, useState } from 'react'
+import { FC, FormEvent, useEffect, useRef, useState } from 'react'
 import { CHAT, USER_CHAT } from 'src/common/constants/chat.event'
 import {
 	USER_JOIN_ROOM,
@@ -22,13 +22,21 @@ const ChatBox: FC = () => {
 		reset: resetChatInput,
 	} = useInput('')
 	const [messages, setMessages] = useState<string[]>([])
+	const chatBoxRef = useRef<HTMLDivElement | null>(null)
+	const height = 270
 
 	const addMessage = (message: string) => {
+		if (!chatBoxRef.current) return
+		const shouldScrollDown =
+			chatBoxRef.current.scrollTop + height === chatBoxRef.current.scrollHeight
 		setMessages((messages) => [...messages, message])
+		if (shouldScrollDown)
+			chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight
 	}
 
 	const onChatSubmit = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
+		if (!chatInput) return
 		const content = filterChat(chatInput)
 		socket.emit(CHAT, { content })
 		resetChatInput()
@@ -39,6 +47,7 @@ const ChatBox: FC = () => {
 			addMessage(`${user.name} has joined the room`)
 		}
 		const userLeaveRoom = ({ user }: { user: User }) => {
+			if (!user) return
 			addMessage(`${user.name} has left the room`)
 		}
 		const userChat = ({ user, content }: ChatPayload) => {
@@ -61,15 +70,15 @@ const ChatBox: FC = () => {
 			p={6}
 			direction="column"
 		>
-			<Text fontSize={'2xl'} fontWeight={600}>
+			<Text fontSize={'2xl'} fontWeight={600} mb={2}>
 				Chat
 			</Text>
-			<Box overflowY={'scroll'} h="270px" maxH="270px">
+			<Box ref={chatBoxRef} overflowY={'scroll'} h={height}>
 				{messages.map((message, index) => {
 					return <Flex key={index}>{message}</Flex>
 				})}
 			</Box>
-			<chakra.form mt={2} display="flex" onSubmit={onChatSubmit}>
+			<chakra.form mt={3} display="flex" onSubmit={onChatSubmit}>
 				<Input
 					value={chatInput}
 					onInput={onChatInput}
@@ -78,7 +87,6 @@ const ChatBox: FC = () => {
 					focusBorderColor="orange.main"
 					mr={2}
 					size={'sm'}
-					isRequired
 					maxLength={CHAT_MAX_LENGTH}
 				/>
 				<Button

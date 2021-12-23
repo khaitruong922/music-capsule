@@ -12,18 +12,33 @@ const SongList: FC = () => {
 			p={6}
 			direction="column"
 		>
-			<Text fontSize={'2xl'} fontWeight={600}>
+			<Text mb={2} fontSize={'2xl'} fontWeight={600}>
 				Queue
 			</Text>
-			<Box p={2} h="400px" maxH="400px" overflowY={'auto'}>
+			<Box mt={3} h="390px" overflowY={'auto'}>
 				{queue.map((song, index) => {
 					const { fileName, title, author, length } = song
 					return (
-						<Flex align="center" key={fileName}>
-							<Text fontWeight={index === 0 ? 600 : 500} noOfLines={1} w="80%">
-								{index + 1}. {author} - {title}
+						<Flex
+							py={2}
+							px={4}
+							bgColor={index === 0 ? 'green.light' : 'white'}
+							align="center"
+							key={fileName}
+							boxShadow="md"
+						>
+							<Text mr={4} fontSize={'lg'}>
+								{index + 1}
 							</Text>
-							<Text ml="auto" noOfLines={1}>
+							<Flex direction="column">
+								<Text fontWeight={600} isTruncated>
+									{title}
+								</Text>
+								<Text fontWeight={500} isTruncated>
+									{author}
+								</Text>
+							</Flex>
+							<Text ml="auto" isTruncated>
 								{formatTimeMMSS(length)}
 							</Text>
 						</Flex>

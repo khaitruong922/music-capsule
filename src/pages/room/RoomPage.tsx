@@ -46,7 +46,7 @@ const RoomPage: FC = () => {
 	if (!room) return <></>
 	return (
 		<Flex h="100%" p={8} justify="center" direction="column">
-			<Text textAlign={'center'} fontSize="2xl" fontWeight={600}>
+			<Text isTruncated textAlign={'center'} fontSize="2xl" fontWeight={600}>
 				{room?.name}
 			</Text>
 			<Flex mb={6} align="center" justify="center">

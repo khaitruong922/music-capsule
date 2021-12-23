@@ -33,10 +33,10 @@ const UserList: FC = () => {
 			p={6}
 			direction="column"
 		>
-			<Text fontSize={'2xl'} fontWeight={600}>
+			<Text fontSize={'2xl'} fontWeight={600} mb={2}>
 				Listeners
 			</Text>
-			<Box overflowY={'auto'} h="200px" maxH="200px">
+			<Box overflowY={'auto'} h="200px">
 				{Object.keys(users).map((id) => {
 					const user = users[id]
 					const { name } = user
