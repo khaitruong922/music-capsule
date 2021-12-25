@@ -5,14 +5,16 @@ An online music streaming platform where you can listen to music with other peop
 ## Features
 
 - **Lobby & Rooms**: Create or join room in the lobby to listen to music together.
-- **Music streaming**: Stream your favorite music with only a YouTube URL. Your song will be put into a queue that will be played in order (and skippable).
+- **Music streaming**: Stream your favorite music with only a YouTube URL. Your song will be put into a queue and can be skipped.
 - **Chat**: Interact with other people while enjoying the music.
+
+**No registeration needed!** Just join with a name and enjoy all these cool features.
 
 ## Tech stack
 
 - Front-end: React, Chakra UI, Context API
 
-- Back-end: NestJS, SocketIO (who even needs a database?) - https://github.com/khaitruong922/music-capsule-server
+- Back-end: NestJS, SocketIO, YouTube API (who even needs a database?) - https://github.com/khaitruong922/music-capsule-server
 
 ## How to use
 
@@ -20,6 +22,6 @@ An online music streaming platform where you can listen to music with other peop
 
 2. Create room or join room if avaiable
 
-3. Paste the YouTube URL of your favorite song and enjoy. Add as many song as you like, you can skip if you want.
+3. Search YouTube or Insert YouTube URL of your favorite song to put it into the queue.
 
-4. Share the room URL with your friends to let them know your musical taste.
+4. Share the room URL with your friends.
