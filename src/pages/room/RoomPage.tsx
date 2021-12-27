@@ -43,7 +43,7 @@ const RoomPage: FC = () => {
 		}
 	}, [loading, joinedLobby])
 
-	if (!room) return <Navigate to="/" />
+	if (!loading && !room) return <Navigate to="/" />
 	return (
 		<Flex h="100%" p={8} justify="center" direction="column">
 			<Text isTruncated textAlign={'center'} fontSize="2xl" fontWeight={600}>
