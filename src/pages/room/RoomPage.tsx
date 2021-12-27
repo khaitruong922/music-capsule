@@ -1,6 +1,6 @@
 import { Box, Flex, GridItem, SimpleGrid, Text } from '@chakra-ui/react'
 import { FC, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { JOIN_ROOM, LEAVE_ROOM } from 'src/common/constants/lobby.event'
 import { useLobbyContext } from 'src/contexts/LobbyContext'
 import { useRoomContext } from 'src/contexts/RoomContext'
@@ -43,7 +43,7 @@ const RoomPage: FC = () => {
 		}
 	}, [loading, joinedLobby])
 
-	if (!room) return <></>
+	if (!room) return <Navigate to="/" />
 	return (
 		<Flex h="100%" p={8} justify="center" direction="column">
 			<Text isTruncated textAlign={'center'} fontSize="2xl" fontWeight={600}>
