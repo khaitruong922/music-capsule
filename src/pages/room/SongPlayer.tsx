@@ -143,7 +143,7 @@ const SongPlayer: FC = () => {
 			direction="column"
 			justify="center"
 			bgColor={'gray.900'}
-			h="200px"
+			h="210px"
 			w="100%"
 			p={6}
 		>
