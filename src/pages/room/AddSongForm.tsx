@@ -1,4 +1,4 @@
-import { chakra, Input, Button } from '@chakra-ui/react'
+import { chakra, Input, Button, Flex, Select, Box } from '@chakra-ui/react'
 import { FC, useState, FormEvent, useEffect } from 'react'
 import {
 	ADD_SONG,
@@ -21,11 +21,20 @@ const AddSongForm: FC = () => {
 	const successToast = useSuccessToast()
 
 	const { value: url, onInput: onUrlInput, reset: resetUrlInput } = useInput('')
+	const { value: playbackSpeedInput, onInput: onPlaybackSpeedInput } =
+		useInput('')
+	const { value: semitoneShiftInput, onInput: onSemitoneShiftInput } =
+		useInput('')
+
 	const addSong = (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		e.stopPropagation()
 		setSubmitting(true)
-		socket.emit(ADD_SONG, { url })
+		socket.emit(ADD_SONG, {
+			url,
+			playbackSpeed: Number(playbackSpeedInput),
+			semitoneShift: Number(semitoneShiftInput),
+		})
 	}
 
 	useEffect(() => {
@@ -57,29 +66,63 @@ const AddSongForm: FC = () => {
 	}, [loading])
 
 	return (
-		<chakra.form onSubmit={addSong} display="flex">
-			<Input
-				color="white"
-				value={url}
-				onInput={onUrlInput}
-				placeholder="Search YouTube / Insert YouTube URL"
-				borderColor="green.light"
-				focusBorderColor="green.main"
-				borderRadius={'sm'}
-				mr={2}
-				isRequired
-			/>
-			<Button
-				_focus={{ boxShadow: 'none' }}
-				colorScheme={'whatsapp'}
-				type="submit"
-				isLoading={submitting}
-				width={'fit-content'}
-				px={6}
-				fontSize={['sm', 'sm', 'sm', 'sm']}
-			>
-				Add
-			</Button>
+		<chakra.form onSubmit={addSong}>
+			<Flex>
+				<Input
+					color="white"
+					value={url}
+					onInput={onUrlInput}
+					placeholder="Search YouTube / Insert YouTube URL *"
+					borderColor="green.light"
+					focusBorderColor="green.main"
+					borderRadius={'sm'}
+					mr={2}
+					isRequired
+				/>
+				<Button
+					_focus={{ boxShadow: 'none' }}
+					colorScheme={'whatsapp'}
+					type="submit"
+					isLoading={submitting}
+					width={'fit-content'}
+					px={6}
+					fontSize={['sm', 'sm', 'sm', 'sm']}
+				>
+					Add
+				</Button>
+			</Flex>
+
+			<Flex mt={2}>
+				<Input
+					color="white"
+					value={semitoneShiftInput}
+					onInput={onSemitoneShiftInput}
+					placeholder="Semitone shift (-12 to +12)"
+					borderColor="purple.light"
+					focusBorderColor="purple.main"
+					borderRadius={'sm'}
+					type="number"
+					size="sm"
+					min={-12}
+					step={1}
+					max={12}
+					mr={2}
+				/>
+				<Input
+					color="white"
+					value={playbackSpeedInput}
+					onInput={onPlaybackSpeedInput}
+					placeholder="Playback speed (0.25x - 2.00x)"
+					borderColor="purple.light"
+					focusBorderColor="purple.main"
+					borderRadius={'sm'}
+					type="number"
+					size="sm"
+					min={0.25}
+					step={0.01}
+					max={2.0}
+				/>
+			</Flex>
 		</chakra.form>
 	)
 }
