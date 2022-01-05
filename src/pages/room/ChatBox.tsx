@@ -94,7 +94,7 @@ const ChatBox: FC = () => {
 								</chakra.span>
 								<chakra.span
 									fontWeight={message.isSystem ? 600 : 500}
-									color={message.isSystem ? 'purple.lighter' : 'inherit'}
+									color={message.isSystem ? 'purple.light' : 'inherit'}
 								>
 									{message.username ? ' ' : ''}
 									{message.content}
