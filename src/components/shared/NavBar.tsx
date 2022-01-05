@@ -5,7 +5,7 @@ import images from 'src/assets/images'
 
 const NavBar: FC = () => {
 	return (
-		<Flex py={4} px={8} align="center" bgColor="#111111" h="64px">
+		<Flex py={4} px={8} align="center" bgColor="gray.900" h="64px">
 			<Link to="/">
 				<Image userSelect={'none'} h="40px" src={images.logo} />
 			</Link>

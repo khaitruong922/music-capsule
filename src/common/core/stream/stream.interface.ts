@@ -4,6 +4,7 @@ export interface Song {
 	author: string
 	length: number
 	startTime?: number
+	thumbnailUrl: string
 }
 
 export interface SongQueues {

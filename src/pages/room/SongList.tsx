@@ -6,39 +6,30 @@ import { useRoomContext } from 'src/contexts/RoomContext'
 const SongList: FC = () => {
 	const { queue } = useRoomContext()
 	return (
-		<Flex
-			borderRadius={'2xl'}
-			bgColor={'green.lightest'}
-			p={6}
-			direction="column"
-		>
-			<Text mb={2} fontSize={'2xl'} fontWeight={600}>
-				Queue
-			</Text>
-			<Box mt={3} h="390px" overflowY={'auto'}>
-				{queue.map((song, index) => {
+		<Flex direction="column">
+			<Box mt={3} h="500px" overflowY={'auto'}>
+				{queue?.map((song, index) => {
 					const { fileName, title, author, length } = song
 					return (
 						<Flex
 							py={2}
 							px={4}
-							bgColor={index === 0 ? 'green.light' : 'white'}
+							bgColor={index === 0 ? 'gray.700' : 'gray.800'}
 							align="center"
 							key={fileName}
-							boxShadow="md"
 						>
-							<Text mr={4} fontSize={'lg'}>
+							<Text mr={4} color="white" fontSize={'lg'} fontWeight={600}>
 								{index + 1}
 							</Text>
 							<Flex direction="column">
-								<Text fontWeight={600} isTruncated>
+								<Text color="green.main" fontWeight={600} isTruncated>
 									{title}
 								</Text>
-								<Text fontWeight={500} isTruncated>
+								<Text color="purple.lighter" fontWeight={500} isTruncated>
 									{author}
 								</Text>
 							</Flex>
-							<Text ml="auto" isTruncated>
+							<Text color="white" ml="auto" isTruncated>
 								{formatTimeMMSS(length)}
 							</Text>
 						</Flex>

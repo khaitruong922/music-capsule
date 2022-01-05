@@ -1,4 +1,4 @@
-import { Button, chakra, Flex, Input, Text } from '@chakra-ui/react'
+import { Box, Button, chakra, Flex, Input, Text } from '@chakra-ui/react'
 import { FC, FormEvent, useEffect } from 'react'
 import useInput from 'src/common/hooks/useInput'
 import { generateRandomName } from 'src/common/utils/random'
@@ -18,9 +18,18 @@ const Landing: FC = () => {
 	}
 
 	return (
-		<Flex direction="column" justify="center" align="center" flex={1}>
-			<Text fontSize="xl" align="center">
-				The most awesome music streaming platform
+		<Flex
+			direction={'column'}
+			align="center"
+			justify="center"
+			h="100%"
+			borderTop={'1px'}
+			borderTopColor={'gray.700'}
+			bgColor={'gray.900'}
+			color="white"
+		>
+			<Text fontSize="3xl" align="center">
+				The most amazing music streaming platform
 			</Text>
 			<chakra.form
 				mt={4}

@@ -1,21 +1,29 @@
-import { Box, Flex, GridItem, SimpleGrid, Text } from '@chakra-ui/react'
+import { Box, Flex, GridItem, SimpleGrid } from '@chakra-ui/react'
 import { FC, useEffect } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { JOIN_ROOM, LEAVE_ROOM } from 'src/common/constants/lobby.event'
+import {
+	JOIN_ROOM,
+	LEAVE_ROOM,
+	USER_JOIN_ROOM,
+	USER_LEAVE_ROOM,
+} from 'src/common/constants/lobby.event'
+import { UserWithSocketId } from 'src/common/core/lobby/lobby.interface'
+import AppDivider from 'src/components/shared/AppDivider'
 import { useLobbyContext } from 'src/contexts/LobbyContext'
 import { useRoomContext } from 'src/contexts/RoomContext'
 import { useSocket } from 'src/contexts/SocketContext'
-import ChatBox from './ChatBox'
 import AddSongForm from './AddSongForm'
+import ChatBox from './ChatBox'
+import RoomHeader from './RoomHeader'
 import SongList from './SongList'
 import SongPlayer from './SongPlayer'
-import UserList from './UserList'
 
 const RoomPage: FC = () => {
 	const socket = useSocket()
 	const { roomId } = useParams()
 	const { joinedLobby } = useLobbyContext()
-	const { fetchRoom, loading, room, leaveRoom } = useRoomContext()
+	const { fetchRoom, loading, room, leaveRoom, addUser, deleteUser } =
+		useRoomContext()
 	const { id: socketId } = socket
 	const navigate = useNavigate()
 
@@ -43,30 +51,45 @@ const RoomPage: FC = () => {
 		}
 	}, [loading, joinedLobby])
 
+	useEffect(() => {
+		const userJoinRoom = ({ user }: { user: UserWithSocketId }) => {
+			console.log('userJoinRoom', user)
+			addUser(user)
+		}
+		const userLeaveRoom = ({ user }: { user: UserWithSocketId }) => {
+			deleteUser(user.socketId)
+		}
+		socket.on(USER_JOIN_ROOM, userJoinRoom)
+		socket.on(USER_LEAVE_ROOM, userLeaveRoom)
+		return () => {
+			socket.off(USER_JOIN_ROOM, userJoinRoom)
+			socket.off(USER_LEAVE_ROOM, userLeaveRoom)
+		}
+	}, [])
+
 	if (!loading && !room) return <Navigate to="/" />
 	return (
-		<Flex h="100%" p={8} justify="center" direction="column">
-			<Text isTruncated textAlign={'center'} fontSize="2xl" fontWeight={600}>
-				{room?.name}
-			</Text>
-			<Flex mb={6} align="center" justify="center">
-				<AddSongForm />
-			</Flex>
-			<SimpleGrid flex={1} gap={4} columns={3}>
+		<Flex direction="column" h="100%">
+			<AppDivider />
+			<RoomHeader />
+			<AppDivider />
+			<SongPlayer />
+			<AppDivider />
+			<SimpleGrid flex={1} bgColor={'gray.900'} columns={3}>
 				<GridItem
-					h="100%"
-					display="flex"
-					flexDirection={'column'}
 					colSpan={[3, null, null, 2]}
+					p={6}
+					borderRightWidth={['0px', null, null, '1px']}
+					borderRightColor={'gray.700'}
+					borderBottomWidth={['1px', null, null, '0px']}
+					borderBottomColor={'gray.700'}
 				>
-					<SongPlayer />
-					<Box h={4} />
+					<AddSongForm />
+					<Box h={2} />
 					<SongList />
 				</GridItem>
-				<GridItem colSpan={[3, null, null, 1]}>
+				<GridItem p={6} colSpan={[3, null, null, 1]}>
 					<ChatBox />
-					<Box h={4} />
-					<UserList />
 				</GridItem>
 			</SimpleGrid>
 		</Flex>

@@ -1,4 +1,5 @@
 import {
+	Box,
 	Button,
 	chakra,
 	Flex,
@@ -24,6 +25,7 @@ import useInput from 'src/common/hooks/useInput'
 import useNavigateRoom from 'src/common/hooks/useNavigateRoom'
 import { filterRoomName, ROOM_NAME_MAX_LENGTH } from 'src/common/utils/string'
 import RoomCard from 'src/components/lobby/RoomCard'
+import AppDivider from 'src/components/shared/AppDivider'
 import { useErrorToast } from 'src/components/shared/toast'
 import { useLobbyContext } from 'src/contexts/LobbyContext'
 import { socket, useSocket } from 'src/contexts/SocketContext'
@@ -186,31 +188,37 @@ const Lobby: FC = () => {
 	}, [])
 
 	return (
-		<Flex flex={1} direction="column">
-			<SimpleGrid flex={1} gap={8} columns={8}>
-				<GridItem p={8} colSpan={[8, 4, 3, 3, 2]}>
+		<Box h="100%">
+			<SimpleGrid
+				borderTop={'1px'}
+				borderTopColor={'gray.700'}
+				h="100%"
+				flex={1}
+				columns={8}
+				bgColor={'gray.900'}
+			>
+				<GridItem
+					color="white"
+					p={8}
+					colSpan={[8, 4, 3, 3, 2]}
+					borderRightWidth={['0px', '1px']}
+					borderRightColor={'gray.700'}
+					borderBottomWidth={['1px', '0px']}
+					borderBottomColor={'gray.700'}
+				>
 					<Flex justify="center" direction="column">
 						<Text fontSize="2xl" noOfLines={2} fontWeight={600}>
 							Welcome, {name}
-						</Text>
-						<Text noOfLines={1} fontSize="lg">
-							Let's enjoy the music together!
 						</Text>
 					</Flex>
 					<CreateRoomForm />
 					<JoinRoomForm />
 				</GridItem>
-				<GridItem
-					h={'100%'}
-					style={{}}
-					overflowY={'auto'}
-					bgColor={'purple.white'}
-					colSpan={[8, 4, 5, 5, 6]}
-				>
+				<GridItem h={'100%'} overflowY={'auto'} colSpan={[8, 4, 5, 5, 6]}>
 					<RoomList />
 				</GridItem>
 			</SimpleGrid>
-		</Flex>
+		</Box>
 	)
 }
 

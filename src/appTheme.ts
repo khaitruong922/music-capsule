@@ -24,6 +24,7 @@ const appTheme = extendTheme({
 		purple: {
 			white: '#f3e0ff',
 			lightest: '#f5d9ff',
+			lighter: '#dea1ff',
 			light: '#9F7AEA',
 			main: '#805AD5',
 			dark: '#2c1c45',

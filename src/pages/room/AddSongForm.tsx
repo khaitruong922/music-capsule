@@ -57,31 +57,28 @@ const AddSongForm: FC = () => {
 	}, [loading])
 
 	return (
-		<chakra.form
-			width={['90%', '80%', '70%', '60%']}
-			onSubmit={addSong}
-			display="flex"
-			mt={4}
-		>
+		<chakra.form onSubmit={addSong} display="flex">
 			<Input
+				color="white"
 				value={url}
 				onInput={onUrlInput}
 				placeholder="Search YouTube / Insert YouTube URL"
-				borderColor="red.light"
-				focusBorderColor="red.main"
+				borderColor="green.light"
+				focusBorderColor="green.main"
+				borderRadius={'sm'}
 				mr={2}
 				isRequired
 			/>
 			<Button
 				_focus={{ boxShadow: 'none' }}
-				colorScheme={'red'}
+				colorScheme={'whatsapp'}
 				type="submit"
-				px={6}
 				isLoading={submitting}
 				width={'fit-content'}
-				fontSize={['sm', 'sm', 'sm', 'md']}
+				px={6}
+				fontSize={['sm', 'sm', 'sm', 'sm']}
 			>
-				Add to queue
+				Add
 			</Button>
 		</chakra.form>
 	)

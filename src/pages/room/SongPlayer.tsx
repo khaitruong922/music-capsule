@@ -8,9 +8,11 @@ import {
 	SliderThumb,
 	SliderTrack,
 	Text,
+	Image,
 } from '@chakra-ui/react'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { BsFillVolumeMuteFill, BsFillVolumeUpFill } from 'react-icons/bs'
+import images from 'src/assets/images'
 import { NEXT_SONG, SKIP, SONG_ADDED } from 'src/common/constants/stream.event'
 import StaticService from 'src/common/core/static/static.service'
 import { Song } from 'src/common/core/stream/stream.interface'
@@ -31,7 +33,6 @@ const MuteButton: FC = () => {
 			color={'purple.main'}
 			boxSize={'45px'}
 			borderRadius={'full'}
-			_hover={{ bgColor: 'pink.light' }}
 		/>
 	)
 }
@@ -130,14 +131,20 @@ const SongPlayer: FC = () => {
 	}, [queue.length])
 
 	const currentSong = queue[0]
-	const { title = 'Title', author = 'Channel', length } = currentSong || {}
+	const {
+		title = 'Title',
+		author = 'Channel',
+		length,
+		thumbnailUrl,
+	} = currentSong || {}
 
 	return (
 		<Flex
-			bgColor={'purple.white'}
 			direction="column"
-			borderRadius={'2xl'}
+			justify="center"
+			bgColor={'gray.900'}
 			h="200px"
+			w="100%"
 			p={6}
 		>
 			<audio ref={audioRef} muted={muted} autoPlay />
@@ -153,67 +160,82 @@ const SongPlayer: FC = () => {
 					Listen
 				</Button>
 			) : (
-				<>
-					<Box w="100%" mb={4}>
-						<Text noOfLines={1} isTruncated fontWeight={'bold'} fontSize={'xl'}>
-							{title}
-						</Text>
-						<Text noOfLines={1} isTruncated>
-							{author}
-						</Text>
-					</Box>
-					<Slider
-						mb={2}
-						value={currentTime}
-						min={0}
-						max={length}
-						isReadOnly
-						cursor={'default'}
-					>
-						<SliderTrack
-							borderRadius={'2xl'}
-							bgColor={'green.lightest'}
-							height={'10px'}
+				<Flex align="center">
+					<Image
+						bgColor={'white'}
+						visibility={thumbnailUrl ? 'visible' : 'hidden'}
+						src={thumbnailUrl}
+						boxSize="150px"
+						objectFit={'cover'}
+						mr={4}
+						borderRadius={'full'}
+					/>
+
+					<Box w="100%">
+						<Box mb={2}>
+							<Text
+								color="green.main"
+								noOfLines={1}
+								isTruncated
+								fontWeight={'bold'}
+								fontSize={'xl'}
+							>
+								{title}
+							</Text>
+							<Text color="purple.lighter" noOfLines={1} isTruncated>
+								{author}
+							</Text>
+						</Box>
+						<Slider
+							mb={2}
+							value={currentTime}
+							min={0}
+							max={length}
+							isReadOnly
+							cursor={'default'}
 						>
-							<SliderFilledTrack bgColor={'green.main'} />
-						</SliderTrack>
-					</Slider>
-					<Flex mb={2} fontWeight={'bold'} align="center">
-						<Text mr="auto">{formatTimeMMSS(currentTime)}</Text>
-						<Text ml="auto">{formatTimeMMSS(length)}</Text>
-					</Flex>
-				</>
+							<SliderTrack
+								borderRadius={'2xl'}
+								bgColor={'purple.light'}
+								height={'10px'}
+							>
+								<SliderFilledTrack bgColor={'purple.main'} />
+							</SliderTrack>
+						</Slider>
+						<Flex color="white" fontWeight={'bold'} align="center">
+							<Text mr="auto">{formatTimeMMSS(currentTime)}</Text>
+							<Text ml="auto">{formatTimeMMSS(length)}</Text>
+						</Flex>
+
+						<Flex align="center" w={['70%', '60%', '50%', '40%', '30%']}>
+							<Slider
+								value={volume * 100}
+								min={0}
+								max={100}
+								onChange={onSliderChange}
+								mr={2}
+							>
+								<SliderTrack borderRadius={'full'} bgColor={'purple.light'}>
+									<SliderFilledTrack bgColor={'purple.main'} />
+								</SliderTrack>
+								<SliderThumb bgColor={'purple.main'} />
+							</Slider>
+							<MuteButton />
+							<Button
+								ml={2}
+								disabled={autoplayBlocked}
+								onClick={requestSkip}
+								fontSize={['xs', 'xs', 'sm', 'md']}
+								size={'sm'}
+								px={6}
+								colorScheme="purple"
+							>
+								Skip
+							</Button>
+						</Flex>
+					</Box>
+				</Flex>
 			)}
-			<Flex
-				align="center"
-				alignSelf="flex-end"
-				w={['70%', '60%', '50%', '40%', '30%']}
-			>
-				<Slider
-					value={volume * 100}
-					min={0}
-					max={100}
-					onChange={onSliderChange}
-					mr={2}
-				>
-					<SliderTrack borderRadius={'full'} bgColor={'purple.light'}>
-						<SliderFilledTrack bgColor={'purple.main'} />
-					</SliderTrack>
-					<SliderThumb bgColor={'purple.main'} />
-				</Slider>
-				<MuteButton />
-				<Button
-					ml={2}
-					disabled={autoplayBlocked}
-					onClick={requestSkip}
-					fontSize={['xs', 'xs', 'sm', 'md']}
-					size={'sm'}
-					px={6}
-					colorScheme="purple"
-				>
-					Skip
-				</Button>
-			</Flex>
 		</Flex>
 	)
 }

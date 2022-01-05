@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react'
+import { Box, Flex } from '@chakra-ui/react'
 import { FC, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Lobby from 'src/pages/Lobby'
@@ -32,7 +32,7 @@ const AppRouter: FC = () => {
 
 	return (
 		<BrowserRouter>
-			<Flex direction="column" minH="100vh">
+			<Box h="calc(100% - 64px)">
 				<NavBar />
 				{name ? (
 					<Routes>
@@ -44,7 +44,7 @@ const AppRouter: FC = () => {
 				) : (
 					<Landing />
 				)}
-			</Flex>
+			</Box>
 		</BrowserRouter>
 	)
 }

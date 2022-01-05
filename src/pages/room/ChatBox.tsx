@@ -15,17 +15,23 @@ type ChatPayload = {
 	content: string
 }
 
+type Message = {
+	username: string
+	content: string
+	isSystem?: boolean
+}
+
 const ChatBox: FC = () => {
 	const {
 		value: chatInput,
 		onInput: onChatInput,
 		reset: resetChatInput,
 	} = useInput('')
-	const [messages, setMessages] = useState<string[]>([])
+	const [messages, setMessages] = useState<Message[]>([])
 	const chatBoxRef = useRef<HTMLDivElement | null>(null)
-	const height = 270
+	const height = 400
 
-	const addMessage = (message: string) => {
+	const addMessage = (message: Message) => {
 		if (!chatBoxRef.current) return
 		const shouldScrollDown =
 			chatBoxRef.current.scrollTop + height === chatBoxRef.current.scrollHeight
@@ -44,15 +50,28 @@ const ChatBox: FC = () => {
 
 	useEffect(() => {
 		const userJoinRoom = ({ user }: { user: User }) => {
-			addMessage(`${user.name} has joined the room`)
+			addMessage({
+				username: '',
+				content: `${user.name} has joined the room`,
+				isSystem: true,
+			})
 		}
 		const userLeaveRoom = ({ user }: { user: User }) => {
+			console.log('leave room')
 			if (!user) return
-			addMessage(`${user.name} has left the room`)
+			addMessage({
+				username: '',
+				content: `${user.name} has left the room`,
+				isSystem: true,
+			})
 		}
 		const userChat = ({ user, content }: ChatPayload) => {
-			addMessage(`${user.name}: ${content}`)
+			addMessage({
+				username: user?.name,
+				content,
+			})
 		}
+
 		socket.on(USER_JOIN_ROOM, userJoinRoom)
 		socket.on(USER_LEAVE_ROOM, userLeaveRoom)
 		socket.on(USER_CHAT, userChat)
@@ -64,34 +83,42 @@ const ChatBox: FC = () => {
 	}, [])
 
 	return (
-		<Flex
-			borderRadius={'2xl'}
-			bgColor={'orange.lightest'}
-			p={6}
-			direction="column"
-		>
-			<Text fontSize={'2xl'} fontWeight={600} mb={2}>
-				Chat
-			</Text>
-			<Box ref={chatBoxRef} overflowY={'scroll'} h={height}>
+		<Flex direction="column" flex={1}>
+			<Box color="white" ref={chatBoxRef} overflowY={'auto'} h={height}>
 				{messages.map((message, index) => {
-					return <Flex key={index}>{message}</Flex>
+					return (
+						<Flex key={index}>
+							<Text>
+								<chakra.span color={'green.main'} fontWeight={600}>
+									{message.username}
+								</chakra.span>
+								<chakra.span
+									fontWeight={message.isSystem ? 600 : 500}
+									color={message.isSystem ? 'purple.lighter' : 'inherit'}
+								>
+									{message.username ? ' ' : ''}
+									{message.content}
+								</chakra.span>
+							</Text>
+						</Flex>
+					)
 				})}
 			</Box>
 			<chakra.form mt={3} display="flex" onSubmit={onChatSubmit}>
 				<Input
 					value={chatInput}
 					onInput={onChatInput}
-					placeholder="Your message here"
-					borderColor="orange.light"
-					focusBorderColor="orange.main"
+					placeholder="Send a message"
+					borderColor="green.light"
+					focusBorderColor="green.main"
+					color="white"
 					mr={2}
 					size={'sm'}
 					maxLength={CHAT_MAX_LENGTH}
 				/>
 				<Button
 					_focus={{ boxShadow: 'none' }}
-					colorScheme={'orange'}
+					colorScheme={'whatsapp'}
 					type="submit"
 					px={6}
 					width={'fit-content'}
@@ -99,7 +126,7 @@ const ChatBox: FC = () => {
 					borderRadius={'md'}
 					fontSize={['sm', 'sm', 'sm', 'md']}
 				>
-					Send
+					Chat
 				</Button>
 			</chakra.form>
 		</Flex>
