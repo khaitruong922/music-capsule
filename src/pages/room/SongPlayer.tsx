@@ -160,7 +160,7 @@ const SongPlayer: FC = () => {
 					Listen
 				</Button>
 			) : (
-				<Flex align="center">
+				<Flex overflowY={'hidden'} overflowX={'auto'} align="center">
 					<Image
 						bgColor={'white'}
 						visibility={thumbnailUrl ? 'visible' : 'hidden'}
