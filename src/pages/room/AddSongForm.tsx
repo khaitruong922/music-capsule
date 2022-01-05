@@ -32,8 +32,8 @@ const AddSongForm: FC = () => {
 		setSubmitting(true)
 		socket.emit(ADD_SONG, {
 			url,
-			playbackSpeed: Number(playbackSpeedInput),
-			semitoneShift: Number(semitoneShiftInput),
+			playbackSpeed: playbackSpeedInput ? Number(playbackSpeedInput) : 1,
+			semitoneShift: semitoneShiftInput ? Number(semitoneShiftInput) : 0,
 		})
 	}
 
