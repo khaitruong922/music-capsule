@@ -9,7 +9,7 @@ An online music streaming platform where you can listen to music with other peop
 - **Audio manipulation**: Select your favorite pitch and playback speed for any song.
 - **Chat**: Interact with other people while enjoying the music.
 
-**No registeration needed!** Just join with a name and enjoy all these cool features.
+**No registration needed!** Just join with a name and enjoy all these cool features.
 
 ## Tech stack
 
