@@ -165,24 +165,21 @@ const SongPlayer: FC = () => {
 						bgColor={'white'}
 						visibility={thumbnailUrl ? 'visible' : 'hidden'}
 						src={thumbnailUrl}
-						boxSize="150px"
+						boxSize={'150px'}
 						objectFit={'cover'}
-						mr={4}
 						borderRadius={'full'}
 					/>
-
-					<Box w="100%">
+					<Box pl={4} width={'calc(100% - 150px)'}>
 						<Box mb={2}>
 							<Text
 								color="green.main"
-								noOfLines={1}
 								isTruncated
 								fontWeight={'bold'}
 								fontSize={'xl'}
 							>
 								{title}
 							</Text>
-							<Text color="purple.lighter" noOfLines={1} isTruncated>
+							<Text color="purple.lighter" isTruncated>
 								{author}
 							</Text>
 						</Box>
@@ -207,7 +204,7 @@ const SongPlayer: FC = () => {
 							<Text ml="auto">{formatTimeMMSS(length)}</Text>
 						</Flex>
 
-						<Flex align="center" w={['70%', '60%', '50%', '40%', '30%']}>
+						<Flex align="center" w={['100%']} maxW="600px">
 							<Slider
 								value={volume * 100}
 								min={0}
