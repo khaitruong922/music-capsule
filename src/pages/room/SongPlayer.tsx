@@ -69,8 +69,10 @@ const SongPlayer: FC = () => {
 		audio.src = url
 		audio.load()
 		try {
-			audio.currentTime = startTime ? Date.now() / 1000 - startTime : 0
+			audio.muted = true
 			await audio.play()
+			audio.currentTime = startTime ? Date.now() / 1000 - startTime : 0
+			audio.muted = false
 			playingRef.current = true
 			setAutoplayBlocked(false)
 			console.log('good')
