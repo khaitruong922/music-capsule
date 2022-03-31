@@ -269,10 +269,10 @@ const SongPlayer: FC = () => {
                         >
                             <SliderTrack
                                 borderRadius={"2xl"}
-                                bgColor={"purple.light"}
+                                bgColor={"green.lightest"}
                                 height={"10px"}
                             >
-                                <SliderFilledTrack bgColor={"purple.main"} />
+                                <SliderFilledTrack bgColor={"green.main"} />
                             </SliderTrack>
                         </Slider>
                         <Flex color="white" fontWeight={"bold"} align="center">
