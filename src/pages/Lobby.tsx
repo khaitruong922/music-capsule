@@ -137,7 +137,7 @@ const RoomList: FC = () => {
 			deleteRoom(roomId)
 		}
 		const roomSongChanged = ({ roomId, song }: RoomSongChangedPayload) => {
-			console.log('roomSongChanged')
+			// console.log('roomSongChanged')
 			updateRoom(roomId, { nowPlaying: song })
 		}
 		const roomUserCountChanged = ({

@@ -29,7 +29,7 @@ const ChatBox: FC = () => {
 	} = useInput('')
 	const [messages, setMessages] = useState<Message[]>([])
 	const chatBoxRef = useRef<HTMLDivElement | null>(null)
-	const height = 400
+	const height = 500
 
 	const addMessage = (message: Message) => {
 		if (!chatBoxRef.current) return
@@ -57,7 +57,7 @@ const ChatBox: FC = () => {
 			})
 		}
 		const userLeaveRoom = ({ user }: { user: User }) => {
-			console.log('leave room')
+			// console.log('leave room')
 			if (!user) return
 			addMessage({
 				username: '',
@@ -83,8 +83,8 @@ const ChatBox: FC = () => {
 	}, [])
 
 	return (
-		<Flex direction="column" flex={1}>
-			<Box color="white" ref={chatBoxRef} overflowY={'auto'} h={height}>
+		<Flex direction="column" height="100%" flex={1}>
+			<Box color="white" ref={chatBoxRef} overflowY={'auto'} maxH={height}>
 				{messages.map((message, index) => {
 					return (
 						<Flex key={index}>
@@ -104,7 +104,7 @@ const ChatBox: FC = () => {
 					)
 				})}
 			</Box>
-			<chakra.form mt={3} display="flex" onSubmit={onChatSubmit}>
+			<chakra.form mt={"auto"} display="flex" onSubmit={onChatSubmit}>
 				<Input
 					value={chatInput}
 					onInput={onChatInput}

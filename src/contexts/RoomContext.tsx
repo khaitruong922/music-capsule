@@ -84,16 +84,8 @@ export const RoomProvider: FC = ({ children }) => {
 
 	const nextSong = () => {
 		setQueue((queue) => {
-			console.log(
-				'🚀 ~ file: RoomContext.tsx ~ line 32 ~ setQueue ~ queue',
-				queue,
-			)
 			const newQueue = [...queue]
 			newQueue.shift()
-			console.log(
-				'🚀 ~ file: RoomContext.tsx ~ line 35 ~ setQueue ~ newQueue',
-				newQueue,
-			)
 			return newQueue
 		})
 	}

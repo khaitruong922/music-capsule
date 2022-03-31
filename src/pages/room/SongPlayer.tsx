@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react'
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { BsFillVolumeMuteFill, BsFillVolumeUpFill } from 'react-icons/bs'
-import images from 'src/assets/images'
 import { NEXT_SONG, SKIP, SONG_ADDED } from 'src/common/constants/stream.event'
 import StaticService from 'src/common/core/static/static.service'
 import { Song } from 'src/common/core/stream/stream.interface'
@@ -58,7 +57,7 @@ const SongPlayer: FC = () => {
 		const audio = audioRef.current
 		if (!audio) return
 		const song = queue[0]
-		console.log(song)
+		// console.log(song)
 		if (!song) {
 			audio.src = ''
 			playingRef.current = false
@@ -73,10 +72,10 @@ const SongPlayer: FC = () => {
 			await audio.play()
 			playingRef.current = true
 			setAutoplayBlocked(false)
-			console.log('good')
+			// console.log('good')
 		} catch (e) {
 			setAutoplayBlocked(true)
-			console.log('bad')
+			// console.log('bad')
 		}
 	}, [queue.length])
 
@@ -106,12 +105,11 @@ const SongPlayer: FC = () => {
 		const songAdded = ({ song }: { song: Song }) => {
 			addSong(song)
 			const url = StaticService.getMp3Url(song.fileName)
-			console.log('🚀 ~ file: RoomPage.tsx ~ line 88 ~ songAdded ~ url', url)
 		}
 
 		const onNextSong = () => {
 			// Shift to next song
-			console.log('nextSong')
+			// console.log('nextSong')
 			playingRef.current = false
 			nextSong()
 		}
@@ -229,6 +227,7 @@ const SongPlayer: FC = () => {
 							>
 								Skip
 							</Button>
+
 						</Flex>
 					</Box>
 				</Flex>

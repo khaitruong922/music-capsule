@@ -34,7 +34,7 @@ const RoomPage: FC = () => {
 	}, [])
 
 	useEffect(() => {
-		console.log('fetchroom')
+		// console.log('fetchroom')
 		fetchRoom(roomId!)
 	}, [roomId])
 
@@ -53,7 +53,7 @@ const RoomPage: FC = () => {
 
 	useEffect(() => {
 		const userJoinRoom = ({ user }: { user: UserWithSocketId }) => {
-			console.log('userJoinRoom', user)
+			// console.log('userJoinRoom', user)
 			addUser(user)
 		}
 		const userLeaveRoom = ({ user }: { user: UserWithSocketId }) => {
