@@ -1,21 +1,21 @@
 export interface Song {
-	fileName: string
-	title: string
-	author: string
-	length: number
-	startTime?: number
-	thumbnailUrl: string
+    fileName: string
+    title: string
+    author: string
+    length: number
+    startTime?: number
+    thumbnailUrl: string
 }
 
 export interface SongQueues {
-	[roomId: string]: Song[]
+    [roomId: string]: Song[]
 }
 
 export interface WithRoomId {
-	roomId: string
+    roomId: string
 }
 export interface AddSongMessageDto {
-	url: string
+    url: string
 }
 
 export interface AddSongDto extends AddSongMessageDto, WithRoomId {}

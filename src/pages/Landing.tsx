@@ -8,7 +8,7 @@ import { useUserContext } from "src/contexts/UserContext"
 const Landing: FC = () => {
     const { name, setName } = useUserContext()
     const { value: nameInput, onInput: onNameInput } = useInput(
-        name ?? generateRandomName()
+        name ?? generateRandomName(),
     )
     useEffect(() => {}, [])
 

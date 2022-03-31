@@ -1,41 +1,41 @@
-import { Song } from '../stream/stream.interface'
+import { Song } from "../stream/stream.interface"
 
 export interface WithSocketId {
-	socketId: string
+    socketId: string
 }
 
 export interface User {
-	name: string
+    name: string
 }
 
 export interface UserWithSocketId extends User, WithSocketId {}
 
 export interface UserWithRoom extends UserWithSocketId {
-	roomId: string
+    roomId: string
 }
 
 export interface Room {
-	id: string
-	name: string
+    id: string
+    name: string
 }
 export interface RoomResponse extends Room {
-	users: Users
-	queue: Song[]
+    users: Users
+    queue: Song[]
 }
 
 export interface LobbyResponse {
-	rooms: LobbyRoomsResponse
+    rooms: LobbyRoomsResponse
 }
 
 export interface LobbyRoomsResponse {
-	[roomId: string]: LobbyRoomResponse
+    [roomId: string]: LobbyRoomResponse
 }
 
 export interface LobbyRoomResponse extends Room {
-	userCount: number
-	nowPlaying: Song
+    userCount: number
+    nowPlaying: Song
 }
 
 export interface Users {
-	[socketId: string]: User
+    [socketId: string]: User
 }

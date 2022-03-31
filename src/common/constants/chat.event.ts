@@ -1,5 +1,5 @@
 // Send
-export const CHAT = 'CHAT'
+export const CHAT = "CHAT"
 
 // Receive
-export const USER_CHAT = 'USER_CHAT'
+export const USER_CHAT = "USER_CHAT"

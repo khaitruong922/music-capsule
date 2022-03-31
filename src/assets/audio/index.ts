@@ -1,5 +1,5 @@
-import silence from './silence.mp3'
+import silence from "./silence.mp3"
 const audio = {
-	silence,
+    silence,
 }
 export default audio
