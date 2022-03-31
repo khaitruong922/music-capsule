@@ -5,6 +5,7 @@ export interface Song {
     length: number
     startTime?: number
     thumbnailUrl: string
+    youtubeUrl: string
 }
 
 export interface SongQueues {

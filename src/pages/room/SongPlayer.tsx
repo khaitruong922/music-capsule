@@ -3,23 +3,25 @@ import {
     Button,
     Flex,
     Icon,
+    Image,
+    Link,
     Slider,
     SliderFilledTrack,
     SliderThumb,
     SliderTrack,
     Text,
-    Image,
 } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useRef, useState } from "react"
 import { BsFillVolumeMuteFill, BsFillVolumeUpFill } from "react-icons/bs"
+import { FaLink, FaDownload } from "react-icons/fa"
 import { NEXT_SONG, SKIP, SONG_ADDED } from "src/common/constants/stream.event"
+import DownloadService from "src/common/core/download/download.service"
 import StaticService from "src/common/core/static/static.service"
 import { Song } from "src/common/core/stream/stream.interface"
 import { formatTimeMMSS } from "src/common/utils/time"
+import { useSuccessToast } from "src/components/shared/toast"
 import { useRoomContext } from "src/contexts/RoomContext"
 import { useSocket } from "src/contexts/SocketContext"
-import { GrCloudDownload } from "react-icons/gr"
-import { FaLink } from "react-icons/fa"
 
 const MuteButton: FC = () => {
     const { muted, toggleMuted } = useRoomContext()
@@ -38,6 +40,81 @@ const MuteButton: FC = () => {
     )
 }
 
+const SkipButton: FC = () => {
+    const { queue } = useRoomContext()
+    const socket = useSocket()
+    const song = queue[0]
+
+    const requestSkip = useCallback(() => {
+        socket.emit(SKIP)
+    }, [socket])
+    return (
+        <Button
+            disabled={!song}
+            onClick={requestSkip}
+            fontSize={["xs", "xs", "sm", "md"]}
+            size={"sm"}
+            px={6}
+            mr={2}
+            colorScheme="yellow"
+            _focus={{ boxShadow: "none" }}
+        >
+            Skip
+        </Button>
+    )
+}
+
+const DownloadButton: FC = () => {
+    const { queue } = useRoomContext()
+    const song = queue[0]
+    const download = useCallback(() => {
+        if (!song) return
+        DownloadService.downloadFile(song.fileName)
+    }, [song])
+    return (
+        <Button
+            onClick={download}
+            disabled={!song}
+            fontSize={["xs", "xs", "sm", "md"]}
+            size={"sm"}
+            px={6}
+            mr={2}
+            colorScheme="yellow"
+            _focus={{ boxShadow: "none" }}
+        >
+            <Icon as={FaDownload} />
+        </Button>
+    )
+}
+const CopyButton: FC = () => {
+    const { queue } = useRoomContext()
+    const successToast = useSuccessToast()
+    const song = queue[0]
+    const copy = useCallback(() => {
+        if (!song) return
+        const { youtubeUrl, title } = song
+        successToast({
+            title: "Copied",
+            description: `YouTube URL of ${title} has been copied to clipboard`,
+        })
+        navigator.clipboard.writeText(youtubeUrl)
+    }, [song])
+
+    return (
+        <Button
+            disabled={!song}
+            onClick={copy}
+            fontSize={["xs", "xs", "sm", "md"]}
+            size={"sm"}
+            px={6}
+            mr={2}
+            colorScheme="yellow"
+            _focus={{ boxShadow: "none" }}
+        >
+            <Icon as={FaLink} />
+        </Button>
+    )
+}
 const SongPlayer: FC = () => {
     const socket = useSocket()
     const {
@@ -85,10 +162,6 @@ const SongPlayer: FC = () => {
         setVolume(value / 100)
     }
 
-    const requestSkip = () => {
-        socket.emit(SKIP)
-    }
-
     useEffect(() => {
         const audio = audioRef.current
         if (!audio) return
@@ -106,7 +179,6 @@ const SongPlayer: FC = () => {
 
         const songAdded = ({ song }: { song: Song }) => {
             addSong(song)
-            const url = StaticService.getMp3Url(song.fileName)
         }
 
         const onNextSong = () => {
@@ -232,42 +304,9 @@ const SongPlayer: FC = () => {
                             <MuteButton />
                         </Flex>
                         <Flex w="100%">
-                            <Button
-                                disabled={autoplayBlocked}
-                                onClick={requestSkip}
-                                fontSize={["xs", "xs", "sm", "md"]}
-                                size={"sm"}
-                                px={6}
-                                mr={2}
-                                colorScheme="yellow"
-                                _focus={{ boxShadow: "none" }}
-                            >
-                                Skip
-                            </Button>
-                            <Button
-                                disabled={autoplayBlocked}
-                                onClick={requestSkip}
-                                fontSize={["xs", "xs", "sm", "md"]}
-                                size={"sm"}
-                                px={6}
-                                mr={2}
-                                _focus={{ boxShadow: "none" }}
-                                color="white"
-                                colorScheme={"yellow"}
-                            >
-                                <Icon as={GrCloudDownload} />
-                            </Button>
-                            <Button
-                                disabled={autoplayBlocked}
-                                onClick={requestSkip}
-                                fontSize={["xs", "xs", "sm", "md"]}
-                                size={"sm"}
-                                px={6}
-                                colorScheme="yellow"
-                                _focus={{ boxShadow: "none" }}
-                            >
-                                <Icon as={FaLink} />
-                            </Button>
+                            <SkipButton />
+                            <CopyButton />
+                            <DownloadButton />
                         </Flex>
                     </Box>
                 </Flex>

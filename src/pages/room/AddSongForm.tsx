@@ -6,7 +6,14 @@ import {
     Input,
     Text,
 } from "@chakra-ui/react"
-import { FC, FormEvent, useCallback, useEffect, useState } from "react"
+import {
+    FC,
+    FormEvent,
+    KeyboardEventHandler,
+    useCallback,
+    useEffect,
+    useState,
+} from "react"
 import {
     ADD_SONG,
     ADD_SONG_FAILED,
@@ -15,14 +22,12 @@ import {
 import { Song } from "src/common/core/stream/stream.interface"
 import useInput from "src/common/hooks/useInput"
 import { useErrorToast, useSuccessToast } from "src/components/shared/toast"
-import { useLobbyContext } from "src/contexts/LobbyContext"
 import { useRoomContext } from "src/contexts/RoomContext"
 import { useSocket } from "src/contexts/SocketContext"
 
 const AddSongForm: FC = () => {
     const socket = useSocket()
-    const { joinedLobby } = useLobbyContext()
-    const { loading, room } = useRoomContext()
+    const { loading } = useRoomContext()
     const [submitting, setSubmitting] = useState(false)
     const errorToast = useErrorToast()
     const successToast = useSuccessToast()
@@ -31,7 +36,9 @@ const AddSongForm: FC = () => {
         value: url,
         onInput: onUrlInput,
         reset: resetUrlInput,
+        setValue: setUrlInput,
     } = useInput("")
+
     const {
         value: playbackSpeedInput,
         onInput: onPlaybackSpeedInput,
@@ -44,10 +51,12 @@ const AddSongForm: FC = () => {
         reset: resetSemitoneShiftInput,
     } = useInput("0")
 
+    const getBestSpeed = useCallback(() => {
+        return Math.pow(2, Number(semitoneShiftInput) / 12).toFixed(2)
+    }, [semitoneShiftInput])
+
     const setBestPlaybackSpeed = useCallback(() => {
-        const bestSpeed = Math.pow(2, Number(semitoneShiftInput) / 12).toFixed(
-            2,
-        )
+        const bestSpeed = getBestSpeed()
         setPlaybackSpeedInput(String(bestSpeed))
     }, [semitoneShiftInput])
 
