@@ -78,7 +78,6 @@ const AddSongForm: FC = () => {
                 title: "Add song successfully",
                 description: `${song.title} has been added to queue`,
             })
-            resetUrlInput()
         }
         const addSongFailed = ({ message }: { message: string }) => {
             setSubmitting(false)

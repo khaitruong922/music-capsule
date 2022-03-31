@@ -7,7 +7,7 @@ const SongList: FC = () => {
     const { queue } = useRoomContext()
     return (
         <Flex direction="column">
-            <Box mt={3} h="420px" overflowY={"auto"}>
+            <Box mt={3} h="320px" overflowY={"auto"}>
                 {queue?.map((song, index) => {
                     const { fileName, title, author, length, thumbnailUrl } =
                         song

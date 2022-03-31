@@ -5,7 +5,9 @@ import {
     USER_JOIN_ROOM,
     USER_LEAVE_ROOM,
 } from "src/common/constants/lobby.event"
+import { SONG_ADDED } from "src/common/constants/stream.event"
 import { User, UserWithSocketId } from "src/common/core/lobby/lobby.interface"
+import { Song } from "src/common/core/stream/stream.interface"
 import useInput from "src/common/hooks/useInput"
 import { CHAT_MAX_LENGTH, filterChat } from "src/common/utils/string"
 import { socket } from "src/contexts/SocketContext"
@@ -29,7 +31,7 @@ const ChatBox: FC = () => {
     } = useInput("")
     const [messages, setMessages] = useState<Message[]>([])
     const chatBoxRef = useRef<HTMLDivElement | null>(null)
-    const height = 500
+    const height = 400
 
     const addMessage = (message: Message) => {
         if (!chatBoxRef.current) return
@@ -73,13 +75,29 @@ const ChatBox: FC = () => {
             })
         }
 
+        const songAdded = ({
+            song,
+            username,
+        }: {
+            song: Song
+            username: string
+        }) => {
+            addMessage({
+                username: "",
+                content: `${username} has added ${song.title} to the queue`,
+                isSystem: true,
+            })
+        }
+
         socket.on(USER_JOIN_ROOM, userJoinRoom)
         socket.on(USER_LEAVE_ROOM, userLeaveRoom)
         socket.on(USER_CHAT, userChat)
+        socket.on(SONG_ADDED, songAdded)
         return () => {
             socket.off(USER_JOIN_ROOM, userJoinRoom)
             socket.off(USER_LEAVE_ROOM, userLeaveRoom)
             socket.off(USER_CHAT, userChat)
+            socket.off(SONG_ADDED, songAdded)
         }
     }, [])
 
@@ -105,7 +123,7 @@ const ChatBox: FC = () => {
                                     fontWeight={message.isSystem ? 600 : 500}
                                     color={
                                         message.isSystem
-                                            ? "purple.light"
+                                            ? "purple.lighter"
                                             : "inherit"
                                     }
                                 >
