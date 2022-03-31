@@ -147,8 +147,8 @@ const SongPlayer: FC = () => {
         audio.src = url
         audio.load()
         try {
-            audio.currentTime = startTime ? Date.now() / 1000 - startTime : 0
             await audio.play()
+            audio.currentTime = startTime ? Date.now() / 1000 - startTime : 0
             playingRef.current = true
             setAutoplayBlocked(false)
             // console.log('good')
