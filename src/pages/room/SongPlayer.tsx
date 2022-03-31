@@ -269,7 +269,7 @@ const SongPlayer: FC = () => {
                         >
                             <SliderTrack
                                 borderRadius={"2xl"}
-                                bgColor={"green.lightest"}
+                                bgColor={"green.lighter"}
                                 height={"10px"}
                             >
                                 <SliderFilledTrack bgColor={"green.main"} />
