@@ -32,7 +32,7 @@
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "lint": "npx eslint --fix --ext .js,.ts,.tsx ./src",
-        "prettier": "npx prettier --write src/**"
+        "format": "npx prettier --write src/**/*.{js,jsx,ts,tsx}"
     },
     "eslintConfig": {
         "extends": [
