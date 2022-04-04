@@ -152,7 +152,7 @@ const AddSongForm: FC = () => {
             </FormControl>
             <FormControl mt={2} alignItems={"center"} display={"flex"}>
                 <Text isTruncated w="240px" mr={2}>
-                    Playback speed (0.5 -&gt; 2.00)
+                    Playback speed (0.50 -&gt; 2.00)
                 </Text>
                 <Input
                     w="60px"
