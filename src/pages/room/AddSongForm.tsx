@@ -32,12 +32,7 @@ const AddSongForm: FC = () => {
     const errorToast = useErrorToast()
     const successToast = useSuccessToast()
 
-    const {
-        value: url,
-        onInput: onUrlInput,
-        reset: resetUrlInput,
-        setValue: setUrlInput,
-    } = useInput("")
+    const { value: url, onInput: onUrlInput } = useInput("")
 
     const {
         value: playbackSpeedInput,
@@ -157,7 +152,7 @@ const AddSongForm: FC = () => {
             </FormControl>
             <FormControl mt={2} alignItems={"center"} display={"flex"}>
                 <Text isTruncated w="240px" mr={2}>
-                    Playback speed (0.25 -&gt; 2.00)
+                    Playback speed (0.5 -&gt; 2.00)
                 </Text>
                 <Input
                     w="60px"
@@ -170,7 +165,7 @@ const AddSongForm: FC = () => {
                     borderRadius={"sm"}
                     type="number"
                     size="sm"
-                    min={0.25}
+                    min={0.5}
                     step={0.01}
                     max={2.0}
                     mr={2}
