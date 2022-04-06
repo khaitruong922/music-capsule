@@ -107,7 +107,8 @@ const ChatBox: FC = () => {
                 color="white"
                 ref={chatBoxRef}
                 overflowY={"auto"}
-                maxH={height}
+                h={height}
+                mb={4}
             >
                 {messages.map((message, index) => {
                     return (
