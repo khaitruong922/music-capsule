@@ -9,10 +9,6 @@ import {
     useState,
 } from "react"
 import {
-    USER_JOIN_ROOM,
-    USER_LEAVE_ROOM,
-} from "src/common/constants/lobby.event"
-import {
     Room,
     Users,
     UserWithSocketId,
@@ -20,7 +16,6 @@ import {
 import LobbyService from "src/common/core/lobby/lobby.service"
 import { Song } from "src/common/core/stream/stream.interface"
 import useLocalStorage from "src/common/hooks/useLocalStorage"
-import { useSocket } from "./SocketContext"
 
 interface RoomContextProps {
     room?: Room
@@ -47,7 +42,6 @@ export const RoomContext = createContext<RoomContextProps | undefined>(
     undefined,
 )
 export const RoomProvider: FC = ({ children }) => {
-    const socket = useSocket()
     const [room, setRoom] = useState<Room>()
     const [queue, setQueue] = useState<Song[]>([])
     const [users, setUsers] = useState<Users>({})

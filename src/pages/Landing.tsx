@@ -1,4 +1,4 @@
-import { Box, Button, chakra, Flex, Input, Text } from "@chakra-ui/react"
+import { Button, chakra, Flex, Input, Text } from "@chakra-ui/react"
 import { FC, FormEvent, useEffect } from "react"
 import useInput from "src/common/hooks/useInput"
 import { generateRandomName } from "src/common/utils/random"

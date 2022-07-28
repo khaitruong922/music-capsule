@@ -4,7 +4,6 @@ import {
     Flex,
     Icon,
     Image,
-    Link,
     Slider,
     SliderFilledTrack,
     SliderThumb,
@@ -13,7 +12,7 @@ import {
 } from "@chakra-ui/react"
 import { FC, useCallback, useEffect, useRef, useState } from "react"
 import { BsFillVolumeMuteFill, BsFillVolumeUpFill } from "react-icons/bs"
-import { FaLink, FaDownload } from "react-icons/fa"
+import { FaDownload, FaLink } from "react-icons/fa"
 import { NEXT_SONG, SKIP, SONG_ADDED } from "src/common/constants/stream.event"
 import DownloadService from "src/common/core/download/download.service"
 import StaticService from "src/common/core/static/static.service"
@@ -126,7 +125,6 @@ const SongPlayer: FC = () => {
         setVolume,
         currentTime,
         setCurrentTime,
-        setMuted,
         muted,
     } = useRoomContext()
     const audioRef = useRef<HTMLAudioElement>(null)
@@ -151,16 +149,17 @@ const SongPlayer: FC = () => {
             audio.currentTime = startTime ? Date.now() / 1000 - startTime : 0
             playingRef.current = true
             setAutoplayBlocked(false)
-            // console.log('good')
         } catch (e) {
             setAutoplayBlocked(true)
-            // console.log('bad')
         }
     }, [queue.length])
 
     const onSliderChange = (value: number) => {
         setVolume(value / 100)
     }
+    useEffect(() => {
+        setCurrentTime(0)
+    }, [])
 
     useEffect(() => {
         const audio = audioRef.current

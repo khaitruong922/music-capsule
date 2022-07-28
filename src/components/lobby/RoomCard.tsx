@@ -2,10 +2,7 @@ import { Box, Flex, Icon, Text } from "@chakra-ui/react"
 import { FC } from "react"
 import { BiHeadphone } from "react-icons/bi"
 import { Link } from "react-router-dom"
-import {
-    LobbyRoomResponse,
-    RoomResponse,
-} from "src/common/core/lobby/lobby.interface"
+import { LobbyRoomResponse } from "src/common/core/lobby/lobby.interface"
 interface Props {
     room: LobbyRoomResponse
 }

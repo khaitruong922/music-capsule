@@ -2,7 +2,6 @@ import { createContext, FC, useContext, useState } from "react"
 import {
     LobbyRoomResponse,
     LobbyRoomsResponse,
-    Room,
 } from "src/common/core/lobby/lobby.interface"
 import LobbyService from "src/common/core/lobby/lobby.service"
 
