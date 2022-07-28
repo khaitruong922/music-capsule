@@ -25,7 +25,6 @@ import useInput from "src/common/hooks/useInput"
 import useNavigateRoom from "src/common/hooks/useNavigateRoom"
 import { filterRoomName, ROOM_NAME_MAX_LENGTH } from "src/common/utils/string"
 import RoomCard from "src/components/lobby/RoomCard"
-import AppDivider from "src/components/shared/AppDivider"
 import { useErrorToast } from "src/components/shared/toast"
 import { useLobbyContext } from "src/contexts/LobbyContext"
 import { socket, useSocket } from "src/contexts/SocketContext"
@@ -51,7 +50,6 @@ const CreateRoomForm: FC = () => {
                 focusBorderColor="purple.main"
                 w="250px"
                 mr={2}
-                isRequired
                 maxLength={ROOM_NAME_MAX_LENGTH}
             />
             <Button
