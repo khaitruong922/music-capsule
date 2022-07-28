@@ -10,7 +10,7 @@ An online music streaming platform where you can listen to music with other peop
 - **Chat**: Interact with other people while enjoying the music.
 - **Download**: Download current song to your device.
 
-**No registration needed!** Just join in and enjoy all these cool features.
+**No registration needed!**
 
 ## Tech stack
 
