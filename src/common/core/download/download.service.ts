@@ -10,6 +10,7 @@ const getMp3DownloadUrl = (fileName: string) => {
 const downloadFile = (fileName: string) => {
     const link = document.createElement("a")
     link.href = getMp3DownloadUrl(fileName)
+    link.target = "_blank"
     link.download = fileName
     link.click()
 }
