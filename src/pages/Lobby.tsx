@@ -76,7 +76,6 @@ const JoinRoomForm: FC = () => {
         e.preventDefault()
         setLoading(true)
         try {
-            const room = await LobbyService.getRoom(roomIdInput)
             navigateRoom(roomIdInput)
         } catch (e) {
             if (axios.isAxiosError(e)) {
@@ -205,7 +204,7 @@ const Lobby: FC = () => {
                     borderBottomColor={"gray.700"}
                 >
                     <Flex justify="center" direction="column">
-                        <Text fontSize="2xl" noOfLines={2} fontWeight={600}>
+                        <Text fontSize="xl" noOfLines={2} fontWeight={600}>
                             Welcome, {name}
                         </Text>
                     </Flex>

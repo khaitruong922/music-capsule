@@ -25,8 +25,12 @@ const RoomCard: FC<Props> = ({ room }) => {
                         p={4}
                         color="white"
                         h="100%"
-                        bgColor={"blackAlpha.800"}
-                        _hover={{ backgroundColor: "blackAlpha.900" }}
+                        bgColor={nowPlaying ? "blackAlpha.800" : "gray.700"}
+                        _hover={{
+                            backgroundColor: nowPlaying
+                                ? "blackAlpha.900"
+                                : "gray.800",
+                        }}
                     >
                         <Text
                             color="green.main"
@@ -42,7 +46,7 @@ const RoomCard: FC<Props> = ({ room }) => {
                             noOfLines={2}
                             fontSize={"md"}
                         >
-                            Now playing: {title}
+                            {title || "Idle..."}
                         </Text>
                         <Flex overflowX="hidden" align="center">
                             <Icon boxSize={"25px"} as={BiHeadphone} mr={1} />
