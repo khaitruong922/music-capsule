@@ -53,7 +53,7 @@ const SongList: FC = () => {
                                     {author}
                                 </Text>
                             </Flex>
-                            <Text color="white" ml="auto" isTruncated>
+                            <Text color="white" ml="auto">
                                 {formatTimeMMSS(length)}
                             </Text>
                         </Flex>
