@@ -13,7 +13,12 @@ import {
 import { FC, useCallback, useEffect, useRef, useState } from "react"
 import { BsFillVolumeMuteFill, BsFillVolumeUpFill } from "react-icons/bs"
 import { FaDownload, FaLink } from "react-icons/fa"
-import { NEXT_SONG, SKIP, SONG_ADDED } from "src/common/constants/stream.event"
+import {
+    FAST_FORWARD,
+    NEXT_SONG,
+    SKIP,
+    SONG_ADDED,
+} from "src/common/constants/stream.event"
 import DownloadService from "src/common/core/download/download.service"
 import StaticService from "src/common/core/static/static.service"
 import { Song } from "src/common/core/stream/stream.interface"
@@ -186,12 +191,20 @@ const SongPlayer: FC = () => {
             playingRef.current = false
             nextSong()
         }
+        const onFastForward = ({ song }: { song: Song }) => {
+            audio.currentTime = song.startTime
+                ? Date.now() / 1000 - song.startTime
+                : 0
+        }
 
         socket.on(SONG_ADDED, songAdded)
         socket.on(NEXT_SONG, onNextSong)
+        socket.on(FAST_FORWARD, onFastForward)
+
         return () => {
             socket.off(SONG_ADDED, songAdded)
             socket.off(NEXT_SONG, onNextSong)
+            socket.off(FAST_FORWARD, onFastForward)
         }
     }, [])
 

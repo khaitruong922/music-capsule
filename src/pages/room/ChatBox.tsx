@@ -5,6 +5,11 @@ import {
     USER_JOIN_ROOM,
     USER_LEAVE_ROOM,
 } from "src/common/constants/lobby.event"
+import {
+    FAST_FORWARD,
+    INVALID_COMMAND,
+    SKIP,
+} from "src/common/constants/stream.event"
 import { SONG_ADDED } from "src/common/constants/stream.event"
 import { User, UserWithSocketId } from "src/common/core/lobby/lobby.interface"
 import { Song } from "src/common/core/stream/stream.interface"
@@ -18,9 +23,9 @@ type ChatPayload = {
 }
 
 type Message = {
-    username: string
+    username?: string
     content: string
-    isSystem?: boolean
+    type?: "event" | "error"
 }
 
 const ChatBox: FC = () => {
@@ -54,18 +59,16 @@ const ChatBox: FC = () => {
     useEffect(() => {
         const userJoinRoom = ({ user }: { user: User }) => {
             addMessage({
-                username: "",
                 content: `${user.name} has joined the room`,
-                isSystem: true,
+                type: "event",
             })
         }
         const userLeaveRoom = ({ user }: { user: User }) => {
             // console.log('leave room')
             if (!user) return
             addMessage({
-                username: "",
                 content: `${user.name} has left the room`,
-                isSystem: true,
+                type: "event",
             })
         }
         const userChat = ({ user, content }: ChatPayload) => {
@@ -83,9 +86,41 @@ const ChatBox: FC = () => {
             username: string
         }) => {
             addMessage({
-                username: "",
                 content: `${username} has added ${song.title} to the queue`,
-                isSystem: true,
+                type: "event",
+            })
+        }
+
+        const skip = ({
+            username,
+            title,
+        }: {
+            username: string
+            title: string
+        }) => {
+            addMessage({
+                content: `${username} has skipped ${title}.`,
+                type: "event",
+            })
+        }
+
+        const fastForward = ({
+            username,
+            seconds,
+        }: {
+            username: string
+            seconds: number
+        }) => {
+            addMessage({
+                content: `${username} has fast-forwarded this song by ${seconds} seconds.`,
+                type: "event",
+            })
+        }
+
+        const invalidCommand = ({ message }: { message: string }) => {
+            addMessage({
+                content: message,
+                type: "error",
             })
         }
 
@@ -93,13 +128,25 @@ const ChatBox: FC = () => {
         socket.on(USER_LEAVE_ROOM, userLeaveRoom)
         socket.on(USER_CHAT, userChat)
         socket.on(SONG_ADDED, songAdded)
+        socket.on(SKIP, skip)
+        socket.on(FAST_FORWARD, fastForward)
+        socket.on(INVALID_COMMAND, invalidCommand)
         return () => {
             socket.off(USER_JOIN_ROOM, userJoinRoom)
             socket.off(USER_LEAVE_ROOM, userLeaveRoom)
             socket.off(USER_CHAT, userChat)
             socket.off(SONG_ADDED, songAdded)
+            socket.off(SKIP, skip)
+            socket.off(FAST_FORWARD, fastForward)
+            socket.off(INVALID_COMMAND, invalidCommand)
         }
     }, [])
+
+    const messageTypeToColor = (type?: string) => {
+        if (type === "event") return "purple.lighter"
+        if (type === "error") return "red.400"
+        return "inherit"
+    }
 
     return (
         <Flex direction="column" height="100%" flex={1}>
@@ -121,12 +168,8 @@ const ChatBox: FC = () => {
                                     {message.username}
                                 </chakra.span>
                                 <chakra.span
-                                    fontWeight={message.isSystem ? 600 : 500}
-                                    color={
-                                        message.isSystem
-                                            ? "purple.lighter"
-                                            : "inherit"
-                                    }
+                                    fontWeight={message.type ? 600 : 500}
+                                    color={messageTypeToColor(message.type)}
                                 >
                                     {message.username ? " " : ""}
                                     {message.content}
