@@ -14,7 +14,8 @@ An online music streaming platform where you can listen to music with other peop
 
 ## Chat commands
 
--   **/ff X**: Fast forward the current song by X seconds.
+-   **/ff N**: Fast forward the current song by N seconds. (Default: 5)
+-   **/skip N**: Skip the N-th song in the queue. (Default: 1)
 
 ## Tech stack
 

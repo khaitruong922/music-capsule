@@ -14,11 +14,12 @@ import { FC, useCallback, useEffect, useRef, useState } from "react"
 import { BsFillVolumeMuteFill, BsFillVolumeUpFill } from "react-icons/bs"
 import { FaDownload, FaLink } from "react-icons/fa"
 import {
-    FAST_FORWARD,
     NEXT_SONG,
+    QUEUE_CHANGED,
     SKIP,
     SONG_ADDED,
 } from "src/common/constants/stream.event"
+import { FAST_FORWARD } from "src/common/constants/chat.event"
 import DownloadService from "src/common/core/download/download.service"
 import StaticService from "src/common/core/static/static.service"
 import { Song } from "src/common/core/stream/stream.interface"
@@ -131,6 +132,7 @@ const SongPlayer: FC = () => {
         currentTime,
         setCurrentTime,
         muted,
+        setQueue,
     } = useRoomContext()
     const audioRef = useRef<HTMLAudioElement>(null)
     const [autoplayBlocked, setAutoplayBlocked] = useState(false)
@@ -197,14 +199,20 @@ const SongPlayer: FC = () => {
                 : 0
         }
 
+        const onQueueChanged = ({ queue }: { queue: Song[] }) => {
+            setQueue(queue)
+        }
+
         socket.on(SONG_ADDED, songAdded)
         socket.on(NEXT_SONG, onNextSong)
         socket.on(FAST_FORWARD, onFastForward)
+        socket.on(QUEUE_CHANGED, onQueueChanged)
 
         return () => {
             socket.off(SONG_ADDED, songAdded)
             socket.off(NEXT_SONG, onNextSong)
             socket.off(FAST_FORWARD, onFastForward)
+            socket.off(QUEUE_CHANGED, onQueueChanged)
         }
     }, [])
 

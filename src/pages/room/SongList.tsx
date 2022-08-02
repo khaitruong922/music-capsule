@@ -17,7 +17,7 @@ const SongList: FC = () => {
                             px={4}
                             bgColor={index === 0 ? "gray.700" : "gray.800"}
                             align="center"
-                            key={fileName}
+                            key={`${fileName}-${index}`}
                         >
                             <Text
                                 mr={4}

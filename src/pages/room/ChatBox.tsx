@@ -5,11 +5,8 @@ import {
     USER_JOIN_ROOM,
     USER_LEAVE_ROOM,
 } from "src/common/constants/lobby.event"
-import {
-    FAST_FORWARD,
-    INVALID_COMMAND,
-    SKIP,
-} from "src/common/constants/stream.event"
+import { QUEUE_CHANGED, SKIP } from "src/common/constants/stream.event"
+import { FAST_FORWARD, INVALID_COMMAND } from "src/common/constants/chat.event"
 import { SONG_ADDED } from "src/common/constants/stream.event"
 import { User, UserWithSocketId } from "src/common/core/lobby/lobby.interface"
 import { Song } from "src/common/core/stream/stream.interface"
@@ -64,7 +61,6 @@ const ChatBox: FC = () => {
             })
         }
         const userLeaveRoom = ({ user }: { user: User }) => {
-            // console.log('leave room')
             if (!user) return
             addMessage({
                 content: `${user.name} has left the room`,
@@ -124,6 +120,19 @@ const ChatBox: FC = () => {
             })
         }
 
+        const queueChanged = ({
+            username,
+            title,
+        }: {
+            username: string
+            title: string
+        }) => {
+            addMessage({
+                content: `${username} has removed ${title} from the queue`,
+                type: "event",
+            })
+        }
+
         socket.on(USER_JOIN_ROOM, userJoinRoom)
         socket.on(USER_LEAVE_ROOM, userLeaveRoom)
         socket.on(USER_CHAT, userChat)
@@ -131,6 +140,7 @@ const ChatBox: FC = () => {
         socket.on(SKIP, skip)
         socket.on(FAST_FORWARD, fastForward)
         socket.on(INVALID_COMMAND, invalidCommand)
+        socket.on(QUEUE_CHANGED, queueChanged)
         return () => {
             socket.off(USER_JOIN_ROOM, userJoinRoom)
             socket.off(USER_LEAVE_ROOM, userLeaveRoom)
@@ -139,6 +149,7 @@ const ChatBox: FC = () => {
             socket.off(SKIP, skip)
             socket.off(FAST_FORWARD, fastForward)
             socket.off(INVALID_COMMAND, invalidCommand)
+            socket.off(QUEUE_CHANGED, queueChanged)
         }
     }, [])
 

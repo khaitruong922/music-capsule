@@ -36,6 +36,7 @@ interface RoomContextProps {
     muted: boolean
     setMuted: (muted: boolean) => any
     toggleMuted: () => any
+    setQueue: (queue: Song[]) => any
 }
 
 export const RoomContext = createContext<RoomContextProps | undefined>(
@@ -122,6 +123,7 @@ export const RoomProvider: FC = ({ children }) => {
         muted,
         setMuted: _setMuted,
         toggleMuted: setMuted.toggle,
+        setQueue,
     }
 
     return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>
