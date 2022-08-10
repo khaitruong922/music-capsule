@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react"
+import { Box } from "@chakra-ui/react"
 import { FC, useEffect } from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Lobby from "src/pages/Lobby"
@@ -17,18 +17,19 @@ const AppRouter: FC = () => {
 
     useEffect(() => {
         if (!name) return
-        socket.on("connect", () => {
-            socket.emit(JOIN_LOBBY, { user: { name } })
-        })
+        socket.emit(JOIN_LOBBY, { user: { name } })
+    }, [name])
+
+    useEffect(() => {
         const lobbyJoined = async () => {
             setJoinedLobby(true)
         }
         socket.on(LOBBY_JOINED, lobbyJoined)
         return () => {
-            socket.off(LOBBY_JOINED, lobbyJoined)
             socket.disconnect()
+            socket.off(LOBBY_JOINED, lobbyJoined)
         }
-    }, [name])
+    }, [])
 
     return (
         <BrowserRouter>
