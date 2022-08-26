@@ -1,5 +1,6 @@
 {
-    "name": "my-app",
+    "name": "music-capsule",
+    "author": "Khai Truong",
     "version": "0.1.0",
     "private": true,
     "dependencies": {

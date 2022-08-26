@@ -225,7 +225,7 @@ const SongPlayer: FC = () => {
     const currentSong = queue[0]
     const {
         title = "Title",
-        author = "Channel",
+        channel = "Channel",
         length,
         thumbnailUrl,
     } = currentSong || {}
@@ -276,7 +276,7 @@ const SongPlayer: FC = () => {
                                 {title}
                             </Text>
                             <Text color="purple.lighter" isTruncated>
-                                {author}
+                                {channel}
                             </Text>
                         </Box>
                         <Slider

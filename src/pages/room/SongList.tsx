@@ -9,7 +9,7 @@ const SongList: FC = () => {
         <Flex direction="column">
             <Box mt={3} h="320px" overflowY={"auto"}>
                 {queue?.map((song, index) => {
-                    const { fileName, title, author, length, thumbnailUrl } =
+                    const { fileName, title, channel, length, thumbnailUrl } =
                         song
                     return (
                         <Flex
@@ -50,7 +50,7 @@ const SongList: FC = () => {
                                     fontWeight={500}
                                     isTruncated
                                 >
-                                    {author}
+                                    {channel}
                                 </Text>
                             </Flex>
                             <Text color="white" ml="auto">
