@@ -19,7 +19,6 @@ import {
 } from "src/common/constants/lobby.event"
 import { ROOM_SONG_CHANGED } from "src/common/constants/stream.event"
 import { LobbyRoomResponse } from "src/common/core/lobby/lobby.interface"
-import LobbyService from "src/common/core/lobby/lobby.service"
 import { Song } from "src/common/core/stream/stream.interface"
 import useInput from "src/common/hooks/useInput"
 import useNavigateRoom from "src/common/hooks/useNavigateRoom"
@@ -159,7 +158,7 @@ const RoomList: FC = () => {
             socket.off(ROOM_SONG_CHANGED, roomSongChanged)
             socket.off(ROOM_USER_COUNT_CHANGED, roomUserCountChanged)
         }
-    }, [])
+    }, [addRoom, deleteRoom, updateRoom, clearRooms, fetchRooms])
     return (
         <SimpleGrid p={8} gap={2} columns={[1, 1, 2, 2, 3]}>
             {Object.values(rooms).map((room) => {
@@ -182,7 +181,7 @@ const Lobby: FC = () => {
         return () => {
             socket.off(JOIN_CREATED_ROOM, joinCreatedRoom)
         }
-    }, [])
+    }, [navigateRoom, socket])
 
     return (
         <Box h="100%">

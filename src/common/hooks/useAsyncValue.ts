@@ -18,7 +18,7 @@ export default function useAsyncValue<T>(
         } finally {
             setLoading(false)
         }
-    }, [getData, setLoading])
+    }, [getData, setLoading, error])
 
     useEffect(() => {
         if (!loading) return

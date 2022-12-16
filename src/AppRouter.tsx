@@ -18,7 +18,7 @@ const AppRouter: FC = () => {
     useEffect(() => {
         if (!name) return
         socket.emit(JOIN_LOBBY, { user: { name } })
-    }, [name])
+    }, [name, socket])
 
     useEffect(() => {
         const lobbyJoined = async () => {
@@ -29,7 +29,7 @@ const AppRouter: FC = () => {
             socket.disconnect()
             socket.off(LOBBY_JOINED, lobbyJoined)
         }
-    }, [])
+    }, [socket, setJoinedLobby])
 
     return (
         <BrowserRouter>

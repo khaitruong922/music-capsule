@@ -1,4 +1,4 @@
-import { createContext, FC, useContext, useState } from "react"
+import { createContext, FC, useCallback, useContext, useState } from "react"
 import {
     LobbyRoomResponse,
     LobbyRoomsResponse,
@@ -7,13 +7,13 @@ import LobbyService from "src/common/core/lobby/lobby.service"
 
 interface LobbyContextProps {
     joinedLobby: boolean
-    setJoinedLobby: (b: boolean) => any
+    setJoinedLobby: (b: boolean) => void
     rooms: LobbyRoomsResponse
-    addRoom: (room: LobbyRoomResponse) => any
-    deleteRoom: (roomId: string) => any
-    clearRooms: () => any
-    fetchRooms: () => any
-    updateRoom: (roomId: string, room: Partial<LobbyRoomResponse>) => any
+    addRoom: (room: LobbyRoomResponse) => void
+    deleteRoom: (roomId: string) => void
+    clearRooms: () => void
+    fetchRooms: () => Promise<void>
+    updateRoom: (roomId: string, room: Partial<LobbyRoomResponse>) => void
 }
 
 export const LobbyContext = createContext<LobbyContextProps | undefined>(
@@ -24,36 +24,39 @@ export const LobbyProvider: FC = ({ children }) => {
 
     const [rooms, setRooms] = useState<LobbyRoomsResponse>({})
 
-    const addRoom = (room: LobbyRoomResponse) => {
+    const addRoom = useCallback((room: LobbyRoomResponse) => {
         setRooms((rooms) => ({ ...rooms, [room.id]: room }))
-    }
+    }, [])
 
-    const deleteRoom = (roomId: string) => {
+    const deleteRoom = useCallback((roomId: string) => {
         setRooms((rooms) => {
             const newRooms = { ...rooms }
             delete newRooms[roomId]
             return newRooms
         })
-    }
+    }, [])
 
-    const updateRoom = (roomId: string, room: Partial<LobbyRoomResponse>) => {
-        setRooms((rooms) => {
-            // Override room field
-            const newRoom = { ...rooms[roomId], ...room }
-            return { ...rooms, [roomId]: newRoom }
-        })
-    }
+    const updateRoom = useCallback(
+        (roomId: string, room: Partial<LobbyRoomResponse>) => {
+            setRooms((rooms) => {
+                // Override room field
+                const newRoom = { ...rooms[roomId], ...room }
+                return { ...rooms, [roomId]: newRoom }
+            })
+        },
+        [],
+    )
 
-    const clearRooms = () => {
+    const clearRooms = useCallback(() => {
         setRooms({})
-    }
+    }, [])
 
-    const fetchRooms = async () => {
+    const fetchRooms = useCallback(async () => {
         const lobby = await LobbyService.getLobby()
         setRooms(lobby.rooms)
-    }
+    }, [])
 
-    const value = {
+    const value: LobbyContextProps = {
         joinedLobby,
         setJoinedLobby,
         rooms,

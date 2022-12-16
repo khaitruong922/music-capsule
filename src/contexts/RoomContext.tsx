@@ -3,8 +3,8 @@ import {
     createContext,
     FC,
     MutableRefObject,
+    useCallback,
     useContext,
-    useEffect,
     useRef,
     useState,
 } from "react"
@@ -21,22 +21,22 @@ interface RoomContextProps {
     room?: Room
     queue: Song[]
     users: Users
-    addSong: (song: Song) => any
-    nextSong: () => any
-    fetchRoom: (roomId: string) => any
-    leaveRoom: () => any
-    addUser: (user: UserWithSocketId) => any
-    deleteUser: (socketId: string) => any
+    addSong: (song: Song) => void
+    nextSong: () => void
+    fetchRoom: (roomId: string) => Promise<void>
+    leaveRoom: () => void
+    addUser: (user: UserWithSocketId) => void
+    deleteUser: (socketId: string) => void
     loading: boolean
     playingRef: MutableRefObject<boolean>
     volume: number
-    setVolume: (volume: number) => any
+    setVolume: (volume: number) => void
     currentTime: number
-    setCurrentTime: (time: number) => any
+    setCurrentTime: (time: number) => void
     muted: boolean
-    setMuted: (muted: boolean) => any
-    toggleMuted: () => any
-    setQueue: (queue: Song[]) => any
+    setMuted: (muted: boolean) => void
+    toggleMuted: () => void
+    setQueue: (queue: Song[]) => void
 }
 
 export const RoomContext = createContext<RoomContextProps | undefined>(
@@ -52,15 +52,16 @@ export const RoomProvider: FC = ({ children }) => {
     const playingRef = useRef<boolean>(false)
     const [currentTime, setCurrentTime] = useState(0)
 
-    const leaveRoom = () => {
+    const leaveRoom = useCallback(() => {
         setRoom(undefined)
         setQueue([])
         setUsers({})
         setLoading(true)
         setCurrentTime(0)
         playingRef.current = false
-    }
-    const fetchRoom = async (roomId: string) => {
+    }, [])
+
+    const fetchRoom = useCallback(async (roomId: string) => {
         try {
             const { id, name, queue, users } = await LobbyService.getRoom(
                 roomId,
@@ -73,38 +74,41 @@ export const RoomProvider: FC = ({ children }) => {
         } finally {
             setLoading(false)
         }
-    }
+    }, [])
 
-    const addSong = (song: Song) => {
+    const addSong = useCallback((song: Song) => {
         setQueue((queue) => [...queue, song])
-    }
+    }, [])
 
-    const nextSong = () => {
+    const nextSong = useCallback(() => {
         setQueue((queue) => {
             const newQueue = [...queue]
             newQueue.shift()
             return newQueue
         })
-    }
+    }, [])
 
-    const addUser = (user: UserWithSocketId) => {
+    const addUser = useCallback((user: UserWithSocketId) => {
         setUsers((users) => ({ ...users, [user.socketId]: user }))
-    }
+    }, [])
 
-    const deleteUser = (socketId: string) => {
+    const deleteUser = useCallback((socketId: string) => {
         setUsers((users) => {
             const newRooms = { ...users }
             delete newRooms[socketId]
             return newRooms
         })
-    }
+    }, [])
 
-    const _setMuted = (muted: boolean) => {
-        if (muted) setMuted.on()
-        else setMuted.off()
-    }
+    const _setMuted = useCallback(
+        (muted: boolean) => {
+            if (muted) setMuted.on()
+            else setMuted.off()
+        },
+        [setMuted],
+    )
 
-    const value = {
+    const value: RoomContextProps = {
         room,
         queue,
         addSong,

@@ -1,4 +1,4 @@
-import { createContext, FC, useContext, useState } from "react"
+import { createContext, FC, useContext } from "react"
 import useLocalStorage from "src/common/hooks/useLocalStorage"
 
 interface UserContextProps {

@@ -1,13 +1,20 @@
 import { Box, Button, chakra, Flex, Input, Text } from "@chakra-ui/react"
 import { FC, FormEvent, useEffect, useRef, useState } from "react"
-import { CHAT, USER_CHAT } from "src/common/constants/chat.event"
+import {
+    CHAT,
+    FAST_FORWARD,
+    INVALID_COMMAND,
+    USER_CHAT,
+} from "src/common/constants/chat.event"
 import {
     USER_JOIN_ROOM,
     USER_LEAVE_ROOM,
 } from "src/common/constants/lobby.event"
-import { QUEUE_CHANGED, SKIP } from "src/common/constants/stream.event"
-import { FAST_FORWARD, INVALID_COMMAND } from "src/common/constants/chat.event"
-import { SONG_ADDED } from "src/common/constants/stream.event"
+import {
+    QUEUE_CHANGED,
+    SKIP,
+    SONG_ADDED,
+} from "src/common/constants/stream.event"
 import { User, UserWithSocketId } from "src/common/core/lobby/lobby.interface"
 import { Song } from "src/common/core/stream/stream.interface"
 import useInput from "src/common/hooks/useInput"

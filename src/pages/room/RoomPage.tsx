@@ -31,12 +31,11 @@ const RoomPage: FC = () => {
         return () => {
             leaveRoom()
         }
-    }, [])
+    }, [leaveRoom])
 
     useEffect(() => {
-        // console.log('fetchroom')
         fetchRoom(roomId!)
-    }, [roomId])
+    }, [fetchRoom, roomId])
 
     useEffect(() => {
         if (loading) return
@@ -49,7 +48,7 @@ const RoomPage: FC = () => {
         return () => {
             socket.emit(LEAVE_ROOM, { socketId, roomId })
         }
-    }, [loading, joinedLobby])
+    }, [loading, joinedLobby, room, socketId, roomId, socket, navigate])
 
     useEffect(() => {
         const userJoinRoom = ({ user }: { user: UserWithSocketId }) => {
@@ -65,7 +64,7 @@ const RoomPage: FC = () => {
             socket.off(USER_JOIN_ROOM, userJoinRoom)
             socket.off(USER_LEAVE_ROOM, userLeaveRoom)
         }
-    }, [])
+    }, [socket, addUser, deleteUser])
 
     if (!loading && !room) return <Navigate to="/" />
     return (

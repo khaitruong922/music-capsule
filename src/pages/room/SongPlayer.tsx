@@ -13,13 +13,13 @@ import {
 import { FC, useCallback, useEffect, useRef, useState } from "react"
 import { BsFillVolumeMuteFill, BsFillVolumeUpFill } from "react-icons/bs"
 import { FaDownload, FaLink } from "react-icons/fa"
+import { FAST_FORWARD } from "src/common/constants/chat.event"
 import {
     NEXT_SONG,
     QUEUE_CHANGED,
     SKIP,
     SONG_ADDED,
 } from "src/common/constants/stream.event"
-import { FAST_FORWARD } from "src/common/constants/chat.event"
 import DownloadService from "src/common/core/download/download.service"
 import StaticService from "src/common/core/static/static.service"
 import { Song } from "src/common/core/stream/stream.interface"
@@ -103,7 +103,7 @@ const CopyButton: FC = () => {
             description: `YouTube URL of ${title} has been copied to clipboard`,
         })
         navigator.clipboard.writeText(youtubeUrl)
-    }, [song])
+    }, [song, successToast])
 
     return (
         <Button
@@ -159,14 +159,14 @@ const SongPlayer: FC = () => {
         } catch (e) {
             setAutoplayBlocked(true)
         }
-    }, [queue.length])
+    }, [queue, playingRef])
 
     const onSliderChange = (value: number) => {
         setVolume(value / 100)
     }
     useEffect(() => {
         setCurrentTime(0)
-    }, [])
+    }, [setCurrentTime])
 
     useEffect(() => {
         const audio = audioRef.current
@@ -214,13 +214,13 @@ const SongPlayer: FC = () => {
             socket.off(FAST_FORWARD, onFastForward)
             socket.off(QUEUE_CHANGED, onQueueChanged)
         }
-    }, [])
+    }, [addSong, nextSong, playingRef, setCurrentTime, socket, setQueue])
 
     useEffect(() => {
         if (!playingRef.current) {
             playCurrentSong()
         }
-    }, [queue.length])
+    }, [queue.length, playCurrentSong, playingRef])
 
     const currentSong = queue[0]
     const {

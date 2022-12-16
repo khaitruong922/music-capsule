@@ -46,7 +46,7 @@ const AddSongForm: FC = () => {
     const setBestPlaybackSpeed = useCallback(() => {
         const bestSpeed = getBestSpeed()
         setPlaybackSpeedInput(String(bestSpeed))
-    }, [semitoneShiftInput])
+    }, [getBestSpeed, setPlaybackSpeedInput])
 
     const addSong = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -80,7 +80,7 @@ const AddSongForm: FC = () => {
             socket.off(ADD_SONG_SUCCESS, addSongSuccess)
             socket.off(ADD_SONG_FAILED, addSongFailed)
         }
-    }, [])
+    }, [socket, successToast, errorToast])
 
     useEffect(() => {
         if (loading) return
