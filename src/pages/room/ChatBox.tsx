@@ -26,11 +26,44 @@ type ChatPayload = {
     content: string
 }
 
+type MessageType = "chat" | "event" | "error" | "help" | "help-item"
+
 type Message = {
     username?: string
     content: string
-    type?: "event" | "error"
+    type: MessageType
 }
+
+const HELP_COMMAND = "/help"
+
+const messageTypeToColor = (type: MessageType) => {
+    if (type === "event") return "purple.lighter"
+    if (type === "error") return "red.400"
+    if (type === "help") return "green.main"
+    if (type === "help-item") return "green.light"
+    if (type) return "inherit"
+}
+
+const messageTypeToFontWeight = (type: MessageType) => {
+    if (type === "chat") return 600
+    if (type === "help") return 600
+    return 500
+}
+
+const HELP_MESSAGES: Message[] = [
+    {
+        type: "help",
+        content: "Commands",
+    },
+    {
+        type: "help-item",
+        content: "1. /skip {x} Skip the song at x position (default: 1)",
+    },
+    {
+        type: "help-item",
+        content: "2. /ff {x} Fast-forward the song by x seconds (default: 5)",
+    },
+]
 
 const ChatBox: FC = () => {
     const {
@@ -38,46 +71,60 @@ const ChatBox: FC = () => {
         onInput: onChatInput,
         reset: resetChatInput,
     } = useInput("")
-    const [messages, setMessages] = useState<Message[]>([])
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            type: "help",
+            content: "Type /help to see the list of commands",
+        },
+    ])
     const chatBoxRef = useRef<HTMLDivElement | null>(null)
     const height = 400
 
-    const addMessage = (message: Message) => {
+    const shouldScrolldownRef = useRef(true)
+    const addMessages = (...messages: Message[]) => {
         if (!chatBoxRef.current) return
-        const shouldScrollDown =
+        shouldScrolldownRef.current =
             chatBoxRef.current.scrollTop + height ===
             chatBoxRef.current.scrollHeight
-        setMessages((messages) => [...messages, message])
-        if (shouldScrollDown)
-            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight
+        setMessages((currentMessages) => [...currentMessages, ...messages])
     }
+    useEffect(() => {
+        if (!chatBoxRef.current) return
+        if (shouldScrolldownRef.current)
+            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight
+    }, [messages])
 
     const onChatSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (!chatInput) return
         const content = filterChat(chatInput)
-        socket.emit(CHAT, { content })
+        if (content.toLowerCase() === HELP_COMMAND) {
+            addMessages(...HELP_MESSAGES)
+        } else {
+            socket.emit(CHAT, { content })
+        }
         resetChatInput()
     }
 
     useEffect(() => {
         const userJoinRoom = ({ user }: { user: User }) => {
-            addMessage({
+            addMessages({
                 content: `${user.name} has joined the room`,
                 type: "event",
             })
         }
         const userLeaveRoom = ({ user }: { user: User }) => {
             if (!user) return
-            addMessage({
+            addMessages({
                 content: `${user.name} has left the room`,
                 type: "event",
             })
         }
         const userChat = ({ user, content }: ChatPayload) => {
-            addMessage({
+            addMessages({
                 username: user?.name,
                 content,
+                type: "chat",
             })
         }
 
@@ -88,7 +135,7 @@ const ChatBox: FC = () => {
             song: Song
             username: string
         }) => {
-            addMessage({
+            addMessages({
                 content: `${username} has added ${song.title} to the queue`,
                 type: "event",
             })
@@ -101,7 +148,7 @@ const ChatBox: FC = () => {
             username: string
             title: string
         }) => {
-            addMessage({
+            addMessages({
                 content: `${username} has skipped ${title}.`,
                 type: "event",
             })
@@ -114,14 +161,14 @@ const ChatBox: FC = () => {
             username: string
             seconds: number
         }) => {
-            addMessage({
+            addMessages({
                 content: `${username} has fast-forwarded this song by ${seconds} seconds.`,
                 type: "event",
             })
         }
 
         const invalidCommand = ({ message }: { message: string }) => {
-            addMessage({
+            addMessages({
                 content: message,
                 type: "error",
             })
@@ -134,7 +181,7 @@ const ChatBox: FC = () => {
             username: string
             title: string
         }) => {
-            addMessage({
+            addMessages({
                 content: `${username} has removed ${title} from the queue`,
                 type: "event",
             })
@@ -160,12 +207,6 @@ const ChatBox: FC = () => {
         }
     }, [])
 
-    const messageTypeToColor = (type?: string) => {
-        if (type === "event") return "purple.lighter"
-        if (type === "error") return "red.400"
-        return "inherit"
-    }
-
     return (
         <Flex direction="column" height="100%" flex={1}>
             <Box
@@ -186,7 +227,9 @@ const ChatBox: FC = () => {
                                     {message.username}
                                 </chakra.span>
                                 <chakra.span
-                                    fontWeight={message.type ? 600 : 500}
+                                    fontWeight={messageTypeToFontWeight(
+                                        message.type,
+                                    )}
                                     color={messageTypeToColor(message.type)}
                                 >
                                     {message.username ? " " : ""}
